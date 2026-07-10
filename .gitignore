@@ -16,3 +16,7 @@ dist/
 
 # OS
 .DS_Store
+
+# Vercel
+.vercel/
+.env.local
