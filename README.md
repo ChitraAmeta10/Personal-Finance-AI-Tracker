@@ -62,6 +62,20 @@ The two AI features run against a **pluggable provider** behind dependency-injec
 
 Without any key, categorization degrades gracefully to rules-only and Ask AI returns a clear 503 — everything else works.
 
+## Deploying (Render)
+
+Create a **PostgreSQL** instance, then a **Web Service** from this repo:
+
+| Setting | Value |
+|---|---|
+| Root Directory | `backend` |
+| Build Command | `pip install -r requirements.txt` |
+| Start Command | `python release.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+
+Environment variables: `DATABASE_URL` (Render's URL with the scheme changed to `postgresql+psycopg2://`), `JWT_SECRET_KEY`, and the LLM variables from §LLM provider. `MONGODB_URL` is optional (MongoDB Atlas free tier works).
+
+[release.py](backend/release.py) runs before the server on every deploy: it serializes migrations across concurrently booting instances (Postgres advisory lock), adopts an existing schema that's missing the Alembic stamp, applies migrations, and ensures system categories are seeded.
+
 ## Tests
 
 ```bash

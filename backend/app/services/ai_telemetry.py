@@ -15,14 +15,16 @@ from pymongo.collection import Collection
 
 from app.db.mongo import get_ai_events_collection
 
+_DEFAULT = object()  # sentinel: "look up the real collection" (None means "disabled")
+
 
 def log_ai_event(
     kind: str,
     user_id: uuid.UUID,
     payload: dict,
-    collection: Collection | None = None,
+    collection: Collection | None | object = _DEFAULT,
 ) -> None:
-    coll = collection if collection is not None else get_ai_events_collection()
+    coll = get_ai_events_collection() if collection is _DEFAULT else collection
     if coll is None:
         return
     try:
@@ -38,8 +40,12 @@ def log_ai_event(
         pass  # telemetry is best-effort by design
 
 
-def recent_ai_events(user_id: uuid.UUID, limit: int = 50, collection: Collection | None = None) -> list[dict]:
-    coll = collection if collection is not None else get_ai_events_collection()
+def recent_ai_events(
+    user_id: uuid.UUID,
+    limit: int = 50,
+    collection: Collection | None | object = _DEFAULT,
+) -> list[dict]:
+    coll = get_ai_events_collection() if collection is _DEFAULT else collection
     if coll is None:
         return []
     try:
