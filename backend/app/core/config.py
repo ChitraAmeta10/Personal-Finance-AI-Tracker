@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     app_name: str = "Personal Finance AI Tracker"
     debug: bool = False
 
+    # Comma-separated list of allowed browser origins (the deployed frontend
+    # URL goes here, e.g. "https://finsight.vercel.app").
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+
     database_url: str = "postgresql+psycopg2://finance:finance@localhost:5432/finance_tracker"
 
     # MongoDB — stores AI telemetry (raw LLM call events). Optional: empty URL
