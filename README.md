@@ -1,6 +1,10 @@
 # FinSight — Personal Finance AI Tracker
 
+**Live demo: [personal-finance-ai-tracker.vercel.app](https://personal-finance-ai-tracker.vercel.app)** · API: [personal-finance-ai-tracker.onrender.com/docs](https://personal-finance-ai-tracker.onrender.com/docs)
+
 Upload a bank statement, and FinSight categorizes every transaction with a **hybrid rules + LLM pipeline**, charts your spending, and answers questions in plain English via **validated text-to-SQL**.
+
+> The demo runs on free tiers — the first request after idle takes ~30–60s while the API wakes up.
 
 Backend-first portfolio project: FastAPI · SQLAlchemy 2.0 · **PostgreSQL + MongoDB** (polyglot persistence) · pluggable LLM provider (Claude / Gemini / Groq / Ollama) · React + TypeScript + Recharts. **78 backend tests**, zero-infrastructure test suite.
 
