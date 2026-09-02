@@ -76,11 +76,11 @@ export function InteractiveHeroVisual() {
         />
 
         {activeTab === "card" ? (
-          <div className="suite-card-inner">
+          <div className="suite-card-inner moving-picture-layer">
             <img
               src="/images/card-titanium.jpg"
               alt="FinSight Black Platinum Card"
-              className="suite-hero-img"
+              className="suite-hero-img floating-picture-anim"
             />
             {/* Live Telemetry Floating Overlays */}
             <div className="card-floating-badge badge-top-right">
@@ -88,16 +88,16 @@ export function InteractiveHeroVisual() {
               <span>AI ENCLAVE // ACTIVE</span>
             </div>
             <div className="card-floating-badge badge-bottom-left">
-              <Shield size={12} color="#00f59b" />
+              <Shield size={12} color="#cca77c" />
               <span>$4,820.00 RECOVERED YIELD</span>
             </div>
           </div>
         ) : (
-          <div className="suite-card-inner">
+          <div className="suite-card-inner moving-picture-layer">
             <img
               src="/images/dashboard-matrix.jpg"
               alt="FinSight Real-Time Analytics Matrix"
-              className="suite-hero-img"
+              className="suite-hero-img floating-picture-anim"
             />
             <div className="card-floating-badge badge-top-right">
               <span className="pulse-ping" />

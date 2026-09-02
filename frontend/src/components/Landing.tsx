@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { ThreeFinanceCanvas } from "./landing/ThreeFinanceCanvas";
 import { CustomCursor } from "./landing/CustomCursor";
 import { InteractiveHeroVisual } from "./landing/InteractiveHeroVisual";
+import { MoraliaMovingGallery } from "./landing/MoraliaMovingGallery";
 import { HorizontalShowcase } from "./landing/HorizontalShowcase";
 import { StatementLaboratory } from "./landing/StatementLaboratory";
 import { InteractiveTerminal } from "./landing/InteractiveTerminal";
@@ -131,11 +132,25 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
           </section>
 
-          {/* ==================== SECTION 01: 2026 GEN-Z HORIZONTAL SLIDER ==================== */}
+          {/* ==================== MORALIA MOVING PICTURE SHOWCASE (Cursor-Following Floating Image) ==================== */}
           <section id="showcase" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 01 // ARCHITECTURE ]</div>
-              <h2 className="m-section-title">Visual <em>Subsystems</em> &amp; Telemetry</h2>
+              <div className="m-section-tag">[ 01 // MOVING GALLERY ]</div>
+              <h2 className="m-section-title">Architectural <em>Subsystems</em></h2>
+              <p className="m-section-desc">
+                Hover across each engineering layer to unveil the floating dynamic telemetry and
+                high-resolution visual artifacts.
+              </p>
+            </div>
+
+            <MoraliaMovingGallery />
+          </section>
+
+          {/* ==================== SECTION 02: 2026 GEN-Z HORIZONTAL SLIDER ==================== */}
+          <section className="m-section">
+            <div className="m-section-header">
+              <div className="m-section-tag">[ 02 // SLIDE SHOWCASE ]</div>
+              <h2 className="m-section-title">Deep-Dive <em>Interactive Telemetry</em></h2>
               <p className="m-section-desc">
                 Interactive walkthrough of FinSight's core engine: hybrid rule dispatch, text-to-SQL
                 compilers, and executive cashflow analytics.
