@@ -3,7 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import { ThreeFinanceCanvas } from "./landing/ThreeFinanceCanvas";
 import { CustomCursor } from "./landing/CustomCursor";
-import { ProjectGallery } from "./landing/ProjectGallery";
+import { InteractiveHeroVisual } from "./landing/InteractiveHeroVisual";
+import { HorizontalShowcase } from "./landing/HorizontalShowcase";
 import { StatementLaboratory } from "./landing/StatementLaboratory";
 import { InteractiveTerminal } from "./landing/InteractiveTerminal";
 import { FinancialCalculator } from "./landing/FinancialCalculator";
@@ -22,10 +23,10 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
         particleCount: 85,
         spread: 75,
         origin: { y: 0.65 },
-        colors: ["#cca77c", "#ffffff", "#dfc2a0", "#1e1e1e"],
+        colors: ["#cca77c", "#ffffff", "#00f59b", "#dfc2a0"],
       });
     } catch {
-      // fallback
+      // safe fallback
     }
     setTimeout(() => {
       onGetStarted();
@@ -37,22 +38,33 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       {/* Precision Luxury Custom Cursor */}
       <CustomCursor />
 
-      {/* 3D WebGL Sculptural Geometry Canvas */}
+      {/* Subtle Fluid Velvet WebGL Ambient Shader (No cheesy wireframes) */}
       <ThreeFinanceCanvas />
       <div className="m-bg-vignette" />
 
       <div className="landing-content-layer">
-        {/* ==================== MORALIA LUXURY NAVIGATION ==================== */}
+        {/* ==================== ARCHITECTURAL TOP TELEMETRY ==================== */}
+        <div className="lux-telemetry-strip">
+          <div className="tel-active">
+            <span className="pulse-dot" />
+            <span>AI ENCLAVE // ONLINE</span>
+          </div>
+          <div>MODEL: CLAUDE 3.5 SONNET HYBRID</div>
+          <div>LATENCY: 0.8MS</div>
+          <div>74 UNIT TESTS PASSING</div>
+        </div>
+
+        {/* ==================== EDITORIAL NAVIGATION ==================== */}
         <header className="m-nav-header">
           <a href="#" className="m-brand" data-cursor="FINSIGHT">
             <span>Fin<em>Sight</em></span>
           </a>
 
-          <nav className="m-nav-links" aria-label="Moralia Editorial Navigation">
-            <a href="#gallery" className="m-nav-link" data-cursor="PROJECTS">Showcase</a>
+          <nav className="m-nav-links" aria-label="Main Navigation">
+            <a href="#showcase" className="m-nav-link" data-cursor="SHOWCASE">Showcase</a>
             <a href="#laboratory" className="m-nav-link" data-cursor="LAB">Laboratory</a>
-            <a href="#sandbox" className="m-nav-link" data-cursor="QUERY">Neural Query</a>
-            <a href="#calculator" className="m-nav-link" data-cursor="CAPITAL">Yield</a>
+            <a href="#sandbox" className="m-nav-link" data-cursor="QUERY">Neural SQL</a>
+            <a href="#calculator" className="m-nav-link" data-cursor="YIELD">Capital Yield</a>
             <a href="#pipeline" className="m-nav-link" data-cursor="PIPELINE">Architecture</a>
           </nav>
 
@@ -74,14 +86,14 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           </div>
         </header>
 
-        {/* ==================== MORALIA CONTEMPORARY HERO ==================== */}
+        {/* ==================== HERO: MONUMENTAL TITLE + 3D TITANIUM CARD ==================== */}
         <main>
           <section className="m-hero">
             <div className="m-hero-left">
               <div className="m-meta-pill">
-                <span className="bracket">[</span>
-                <span>AUTONOMOUS FINANCIAL INTELLIGENCE</span>
-                <span className="bracket">]</span>
+                <span>[</span>
+                <span>AUTONOMOUS FINANCIAL INTELLIGENCE // 2026</span>
+                <span>]</span>
               </div>
 
               <h1 className="m-hero-title">
@@ -89,8 +101,9 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               </h1>
 
               <p className="m-hero-lede">
-                FinSight normalizes bank exports with mathematical precision and hybrid Claude 3.5
-                reasoning. Clean, private, and verifiable by construction.
+                FinSight normalizes messy bank statements with mathematical determinism and batched
+                Claude 3.5 reasoning, answering natural language queries in real time with
+                zero-injection SQL.
               </p>
 
               <div className="m-hero-actions">
@@ -103,46 +116,36 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                   <span>Initiate Tracking</span>
                   <ArrowUpRight size={14} />
                 </button>
-                <a href="#gallery" className="btn-m-gold" data-cursor="SHOWCASE">
+                <a href="#showcase" className="btn-m-gold" data-cursor="EXPLORE">
                   <span className="btn-circle-gold">
                     <ArrowUpRight size={13} color="currentColor" />
                   </span>
-                  <span>Explore Showcase</span>
+                  <span>Explore Subsystems</span>
                 </a>
               </div>
             </div>
 
             <div className="m-hero-right">
-              <div className="m-hero-image-card" data-cursor="VAULT">
-                <img
-                  src="/images/hero-vault.jpg"
-                  alt="FinSight Architectural Vault"
-                  className="m-hero-img"
-                />
-                <div className="m-hero-image-overlay" />
-                <div className="m-hero-caption-bar">
-                  <span>FIG 01. ARCHITECTURAL AI VAULT</span>
-                  <span>25.04° N · 55.18° E</span>
-                </div>
-              </div>
+              {/* Interactive 3D Titanium Card / Analytics Matrix with Gyro Tilt */}
+              <InteractiveHeroVisual />
             </div>
           </section>
 
-          {/* ==================== PROJECT SHOWCASE GALLERY (Actual Project Assets) ==================== */}
-          <section id="gallery" className="m-section">
+          {/* ==================== SECTION 01: 2026 GEN-Z HORIZONTAL SLIDER ==================== */}
+          <section id="showcase" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 01 // SHOWCASE ]</div>
-              <h2 className="m-section-title">Platform <em>Subsystems</em> &amp; Visual Artifacts</h2>
+              <div className="m-section-tag">[ 01 // ARCHITECTURE ]</div>
+              <h2 className="m-section-title">Visual <em>Subsystems</em> &amp; Telemetry</h2>
               <p className="m-section-desc">
-                High-resolution architectural captures from the live application, illustrating the
-                ledger, query compiler, and cryptographic telemetry.
+                Interactive walkthrough of FinSight's core engine: hybrid rule dispatch, text-to-SQL
+                compilers, and executive cashflow analytics.
               </p>
             </div>
 
-            <ProjectGallery />
+            <HorizontalShowcase />
           </section>
 
-          {/* ==================== STATEMENT INGESTION LABORATORY ==================== */}
+          {/* ==================== SECTION 02: INGESTION LABORATORY ==================== */}
           <section id="laboratory" className="m-section">
             <div className="m-section-header">
               <div className="m-section-tag">[ 02 // LABORATORY ]</div>
@@ -156,21 +159,21 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <StatementLaboratory />
           </section>
 
-          {/* ==================== NEURAL TEXT-TO-SQL SANDBOX ==================== */}
+          {/* ==================== SECTION 03: NEURAL TEXT-TO-SQL TERMINAL ==================== */}
           <section id="sandbox" className="m-section">
             <div className="m-section-header">
               <div className="m-section-tag">[ 03 // QUANT TERMINAL ]</div>
               <h2 className="m-section-title">Natural Language <em>Text-to-SQL</em></h2>
               <p className="m-section-desc">
-                Inquire in plain English. Every statement is validated through abstract syntax trees
-                (AST) and strictly bounded by your encrypted tenant ID.
+                Inquire in everyday English. Every statement is validated through abstract syntax
+                trees (AST) and strictly bounded by your encrypted tenant ID.
               </p>
             </div>
 
             <InteractiveTerminal />
           </section>
 
-          {/* ==================== CAPITAL YIELD CALCULATOR ==================== */}
+          {/* ==================== SECTION 04: CAPITAL YIELD CALCULATOR ==================== */}
           <section id="calculator" className="m-section">
             <div className="m-section-header">
               <div className="m-section-tag">[ 04 // CAPITAL YIELD ]</div>
@@ -184,10 +187,10 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <FinancialCalculator onCtaClick={triggerGetStarted} />
           </section>
 
-          {/* ==================== ARCHITECTURAL PIPELINE ==================== */}
+          {/* ==================== SECTION 05: ARCHITECTURAL PIPELINE ==================== */}
           <section id="pipeline" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 05 // ARCHITECTURE ]</div>
+              <div className="m-section-tag">[ 05 // PIPELINE ]</div>
               <h2 className="m-section-title">The 4-Stage <em>Ingestion Pipeline</em></h2>
               <p className="m-section-desc">
                 How raw bank CSVs transform into validated financial ledger records in under 500ms.
@@ -197,7 +200,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <PipelineVisualizer />
           </section>
 
-          {/* ==================== MORALIA EDITORIAL FOOTER ==================== */}
+          {/* ==================== EDITORIAL LUXURY FOOTER ==================== */}
           <footer className="m-footer">
             <div className="m-footer-top">
               <div className="m-footer-brand">
