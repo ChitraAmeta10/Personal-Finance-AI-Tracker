@@ -5,18 +5,17 @@
    ============================================================ */
 
 :root {
-  --fin-bg: #090c0a;
-  --fin-bg-surface: rgba(18, 24, 20, 0.85);
-  --fin-bg-card: rgba(14, 19, 16, 0.9);
-  --fin-border: rgba(255, 255, 255, 0.09);
-  --fin-border-gold: rgba(204, 167, 124, 0.35);
+  --fin-bg: #0e1110;
+  --fin-bg-surface: rgba(18, 22, 20, 0.88);
+  --fin-bg-card: rgba(16, 20, 18, 0.92);
+  --fin-border: rgba(255, 255, 255, 0.1);
+  --fin-border-gold: rgba(204, 167, 124, 0.4);
   --fin-gold: #cca77c;
   --fin-gold-bright: #e8c9a5;
-  --fin-emerald: #00f59b;
-  --fin-emerald-glow: rgba(0, 245, 155, 0.25);
+  --fin-accent: #cca77c;
   --fin-text-heading: #f5f6f7;
-  --fin-text-body: #9ea8a2;
-  --fin-text-muted: #5c6660;
+  --fin-text-body: #a5aca7;
+  --fin-text-muted: #666e68;
   --font-serif: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Plus Jakarta Sans", -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
@@ -39,12 +38,10 @@ body, html {
 
 ::selection {
   background: var(--fin-gold);
-  color: #090c0a;
+  color: #0e1110;
 }
 
-/* ============================================================
-   CUSTOM CURSOR (Moralia / Awwwards difference blend)
-   ============================================================ */
+/* Luxury Custom Cursor */
 .luxury-cursor-dot {
   position: fixed;
   top: -4px;
@@ -100,7 +97,14 @@ body, html {
   .luxury-cursor-dot, .luxury-cursor-follower { display: none !important; }
 }
 
-/* WebGL Background Canvas */
+/* Background Atmosphere & Architectural Photo Layer (No Green) */
+.landing-awwwards {
+  position: relative;
+  min-height: 100vh;
+  background: #0e1110 url("/images/luxury-bg.jpg") no-repeat center top fixed;
+  background-size: cover;
+}
+
 .three-canvas-container {
   position: fixed;
   top: 0;
@@ -109,21 +113,15 @@ body, html {
   height: 100vh;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.95;
+  opacity: 0.45;
 }
 
 .m-bg-vignette {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 30%, transparent 45%, rgba(9, 12, 10, 0.85) 90%);
+  background: radial-gradient(circle at 50% 20%, rgba(14, 17, 16, 0.72) 0%, rgba(10, 13, 11, 0.94) 85%);
   pointer-events: none;
   z-index: 2;
-}
-
-.landing-awwwards {
-  position: relative;
-  min-height: 100vh;
-  background: var(--fin-bg);
 }
 
 .landing-content-layer {
@@ -131,9 +129,7 @@ body, html {
   z-index: 3;
 }
 
-/* ============================================================
-   TOP TELEMETRY STRIP & NAVIGATION
-   ============================================================ */
+/* Top Telemetry Strip */
 .lux-telemetry-strip {
   border-bottom: 1px solid var(--fin-border);
   padding: 10px 40px;
@@ -145,7 +141,8 @@ body, html {
   color: var(--fin-text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: rgba(9, 12, 10, 0.6);
+  background: rgba(14, 17, 16, 0.85);
+  backdrop-filter: blur(12px);
 }
 
 @media (max-width: 768px) {
@@ -153,7 +150,7 @@ body, html {
 }
 
 .tel-active {
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -163,8 +160,8 @@ body, html {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--fin-emerald);
-  box-shadow: 0 0 10px var(--fin-emerald);
+  background: var(--fin-gold);
+  box-shadow: 0 0 10px var(--fin-gold);
 }
 
 .m-nav-header {
@@ -471,8 +468,8 @@ body, html {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--fin-emerald);
-  box-shadow: 0 0 8px var(--fin-emerald);
+  background: var(--fin-gold);
+  box-shadow: 0 0 8px var(--fin-gold);
 }
 
 .suite-caption-strip {
@@ -883,7 +880,7 @@ body, html {
 }
 
 .mono-prefix {
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   margin-right: 8px;
   font-weight: 700;
 }
@@ -929,7 +926,7 @@ body, html {
 .classification-source-pill {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -988,7 +985,7 @@ body, html {
 }
 
 .tax-yes {
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1030,7 +1027,7 @@ body, html {
 }
 .terminal-dots .red { background: #ff4757; }
 .terminal-dots .yellow { background: #ffa502; }
-.terminal-dots .green { background: var(--fin-emerald); }
+.terminal-dots .green { background: var(--fin-gold); }
 
 .terminal-title {
   display: flex;
@@ -1044,7 +1041,7 @@ body, html {
 .terminal-badge {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1168,7 +1165,7 @@ body, html {
 .exec-time {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
 }
 
 .sql-code-block {
@@ -1191,7 +1188,7 @@ body, html {
 }
 
 .status-live {
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
   font-size: 11px;
   font-family: var(--font-mono);
 }
@@ -1432,7 +1429,7 @@ body, html {
 }
 
 .cell-number.text-emerald {
-  color: var(--fin-emerald);
+  color: var(--fin-gold);
 }
 
 .cell-number.text-gold {
