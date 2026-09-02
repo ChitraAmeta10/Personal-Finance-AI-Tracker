@@ -10,20 +10,19 @@ export function ThreeFinanceCanvas() {
 
     let animationFrameId: number;
 
-    // 1. Scene & Camera setup
+    // 1. Scene & Filmic Camera
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x060908, 0.0018);
+    scene.fog = new THREE.FogExp2(0x060807, 0.002);
 
     const camera = new THREE.PerspectiveCamera(
-      55,
+      45,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-    camera.position.set(0, 24, 75);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 0, 52);
 
-    // 2. Renderer setup
+    // 2. High-Fidelity Renderer
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: true,
@@ -32,211 +31,268 @@ export function ThreeFinanceCanvas() {
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.35;
     container.appendChild(renderer.domElement);
 
-    // 3. Financial undulating 3D Wave Plane (Yield / Cashflow topology)
-    const planeWidth = 140;
-    const planeHeight = 110;
-    const segmentsW = 55;
-    const segmentsH = 45;
-    const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight, segmentsW, segmentsH);
-    geometry.rotateX(-Math.PI / 2.2);
+    // 3. Central Morphing Liquid Mercury / Financial Quantum Core
+    // High subdivision sphere with procedural vertex displacement
+    const sphereRadius = 11.5;
+    const sphereGeo = new THREE.IcosahedronGeometry(sphereRadius, 32);
+    const posAttribute = sphereGeo.attributes.position;
+    const originalPositions = posAttribute.array.slice();
 
-    const positionAttribute = geometry.attributes.position;
-    const basePositions = positionAttribute.array.slice();
+    // Procedural noise vectors
+    const noiseOffsets = new Float32Array(posAttribute.count);
+    for (let i = 0; i < posAttribute.count; i++) {
+      noiseOffsets[i] = Math.random() * Math.PI * 2;
+    }
 
-    const wireframeMaterial = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
+    // High-end luxury liquid chrome / dark titanium material with Fresnel rim
+    const liquidChromeMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x0f1713,
+      emissive: 0x03180f,
+      emissiveIntensity: 0.4,
+      metalness: 0.95,
+      roughness: 0.12,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.08,
+      reflectivity: 0.95,
+      wireframe: false,
+    });
+
+    const liquidCore = new THREE.Mesh(sphereGeo, liquidChromeMaterial);
+    liquidCore.position.set(12, 1, -4);
+    scene.add(liquidCore);
+
+    // Subtle outer holographic wireframe cage that pulses over the liquid core
+    const outerCageGeo = new THREE.IcosahedronGeometry(sphereRadius * 1.14, 2);
+    const outerCageMat = new THREE.MeshBasicMaterial({
+      color: 0x00f59b,
       wireframe: true,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.14,
     });
-    const waveMesh = new THREE.Mesh(geometry, wireframeMaterial);
-    waveMesh.position.set(0, -14, 0);
-    scene.add(waveMesh);
+    const outerCage = new THREE.Mesh(outerCageGeo, outerCageMat);
+    outerCage.position.copy(liquidCore.position);
+    scene.add(outerCage);
 
-    // 4. Financial Transaction Node Particles
-    const particleCount = 700;
-    const particleGeo = new THREE.BufferGeometry();
-    const particleCoords = new Float32Array(particleCount * 3);
-    const particleColors = new Float32Array(particleCount * 3);
+    // 4. Orbital Architectural Rings (Financial Astrolabe / Coordinate Meridian)
+    const orbitalGroup = new THREE.Group();
+    orbitalGroup.position.copy(liquidCore.position);
 
-    const colorA = new THREE.Color(0x3ecf9a); // Emerald
-    const colorB = new THREE.Color(0xf59e0b); // Cyber Amber/Gold
-    const colorC = new THREE.Color(0x3b82f6); // Cyber Blue
+    const createFineRing = (radius: number, tiltX: number, tiltY: number, color: number) => {
+      const ringGeo = new THREE.RingGeometry(radius, radius + 0.08, 128);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.35,
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = tiltX;
+      ring.rotation.y = tiltY;
+      return ring;
+    };
 
-    for (let i = 0; i < particleCount; i++) {
-      particleCoords[i * 3] = (Math.random() - 0.5) * 160;
-      particleCoords[i * 3 + 1] = (Math.random() - 0.5) * 70;
-      particleCoords[i * 3 + 2] = (Math.random() - 0.5) * 110;
+    const ring1 = createFineRing(15.2, Math.PI / 3, Math.PI / 6, 0x00f59b);
+    const ring2 = createFineRing(17.8, -Math.PI / 4, Math.PI / 4, 0xffffff);
+    const ring3 = createFineRing(20.4, Math.PI / 2.2, -Math.PI / 8, 0xd4af37);
 
-      const pickColor = Math.random() > 0.65 ? colorB : Math.random() > 0.3 ? colorA : colorC;
-      particleColors[i * 3] = pickColor.r;
-      particleColors[i * 3 + 1] = pickColor.g;
-      particleColors[i * 3 + 2] = pickColor.b;
+    orbitalGroup.add(ring1);
+    orbitalGroup.add(ring2);
+    orbitalGroup.add(ring3);
+    scene.add(orbitalGroup);
+
+    // 5. Cinematic Floating Financial Ambient Field (Deep Space Bokeh)
+    const fieldCount = 950;
+    const fieldGeo = new THREE.BufferGeometry();
+    const fieldCoords = new Float32Array(fieldCount * 3);
+    const fieldSizes = new Float32Array(fieldCount);
+    const fieldColors = new Float32Array(fieldCount * 3);
+
+    const cWhite = new THREE.Color(0xffffff);
+    const cEmerald = new THREE.Color(0x00f59b);
+    const cGold = new THREE.Color(0xe6c387);
+    const cMuted = new THREE.Color(0x3e5246);
+
+    for (let i = 0; i < fieldCount; i++) {
+      fieldCoords[i * 3] = (Math.random() - 0.5) * 160;
+      fieldCoords[i * 3 + 1] = (Math.random() - 0.5) * 90;
+      fieldCoords[i * 3 + 2] = (Math.random() - 0.5) * 100;
+
+      fieldSizes[i] = Math.random() * 2.4 + 0.8;
+
+      const pRand = Math.random();
+      const col = pRand > 0.88 ? cGold : pRand > 0.5 ? cEmerald : pRand > 0.2 ? cWhite : cMuted;
+      fieldColors[i * 3] = col.r;
+      fieldColors[i * 3 + 1] = col.g;
+      fieldColors[i * 3 + 2] = col.b;
     }
 
-    particleGeo.setAttribute("position", new THREE.BufferAttribute(particleCoords, 3));
-    particleGeo.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
+    fieldGeo.setAttribute("position", new THREE.BufferAttribute(fieldCoords, 3));
+    fieldGeo.setAttribute("color", new THREE.BufferAttribute(fieldColors, 3));
 
-    // Custom circular soft particle texture
-    const canvas = document.createElement("canvas");
-    canvas.width = 32;
-    canvas.height = 32;
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-      gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-      gradient.addColorStop(0.3, "rgba(255, 255, 255, 0.7)");
-      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 32, 32);
+    // Crisp circular shader particle texture
+    const dotCanvas = document.createElement("canvas");
+    dotCanvas.width = 64;
+    dotCanvas.height = 64;
+    const dotCtx = dotCanvas.getContext("2d");
+    if (dotCtx) {
+      const grad = dotCtx.createRadialGradient(32, 32, 0, 32, 32, 30);
+      grad.addColorStop(0, "rgba(255, 255, 255, 1)");
+      grad.addColorStop(0.2, "rgba(255, 255, 255, 0.8)");
+      grad.addColorStop(0.6, "rgba(255, 255, 255, 0.15)");
+      grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+      dotCtx.fillStyle = grad;
+      dotCtx.fillRect(0, 0, 64, 64);
     }
-    const particleTexture = new THREE.CanvasTexture(canvas);
+    const dotTexture = new THREE.CanvasTexture(dotCanvas);
 
-    const particleMat = new THREE.PointsMaterial({
-      size: 1.8,
+    const fieldMat = new THREE.PointsMaterial({
+      size: 1.4,
       vertexColors: true,
-      map: particleTexture,
+      map: dotTexture,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
+    const ambientField = new THREE.Points(fieldGeo, fieldMat);
+    scene.add(ambientField);
 
-    const particleSystem = new THREE.Points(particleGeo, particleMat);
-    scene.add(particleSystem);
+    // 6. Sculptural Studio Lighting (Awwwards Fashion / Automotive Look)
+    const ambientStudioLight = new THREE.AmbientLight(0xffffff, 0.85);
+    scene.add(ambientStudioLight);
 
-    // 5. Floating 3D Geometric Financial Holograms (Golden Coin, Icosahedron, Diamond Prism)
-    const floatingGroup = new THREE.Group();
+    // High key rim light (Emerald neon)
+    const emeraldRim = new THREE.DirectionalLight(0x00f59b, 4.2);
+    emeraldRim.position.set(-25, 25, 20);
+    scene.add(emeraldRim);
 
-    // Golden Coin Ring
-    const torusGeo = new THREE.TorusGeometry(5, 0.6, 16, 64);
-    const goldMat = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      metalness: 0.9,
-      roughness: 0.15,
-      emissive: 0x78350f,
-      emissiveIntensity: 0.2,
-    });
-    const torus = new THREE.Mesh(torusGeo, goldMat);
-    torus.position.set(28, 8, -10);
-    floatingGroup.add(torus);
+    // Warm specular key light (Champagne gold)
+    const goldKey = new THREE.DirectionalLight(0xe6c387, 3.2);
+    goldKey.position.set(30, -15, 30);
+    scene.add(goldKey);
 
-    // Icosahedron (Neural AI Token)
-    const icoGeo = new THREE.IcosahedronGeometry(4, 0);
-    const emeraldMat = new THREE.MeshStandardMaterial({
-      color: 0x10b981,
-      metalness: 0.85,
-      roughness: 0.2,
-      wireframe: true,
-      emissive: 0x064e3b,
-      emissiveIntensity: 0.5,
-    });
-    const ico = new THREE.Mesh(icoGeo, emeraldMat);
-    ico.position.set(-30, 6, -15);
-    floatingGroup.add(ico);
+    // Cold top fill
+    const topCold = new THREE.PointLight(0x38bdf8, 2.5, 90);
+    topCold.position.set(0, 35, 10);
+    scene.add(topCold);
 
-    // Central Core Floating Prism
-    const octGeo = new THREE.OctahedronGeometry(3.5, 0);
-    const octMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      metalness: 0.7,
-      roughness: 0.25,
-      wireframe: true,
-    });
-    const octahedron = new THREE.Mesh(octGeo, octMat);
-    octahedron.position.set(0, 16, -25);
-    floatingGroup.add(octahedron);
-
-    scene.add(floatingGroup);
-
-    // 6. Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-    scene.add(ambientLight);
-
-    const emeraldLight = new THREE.PointLight(0x10b981, 4, 120);
-    emeraldLight.position.set(-20, 20, 20);
-    scene.add(emeraldLight);
-
-    const amberLight = new THREE.PointLight(0xf59e0b, 3, 120);
-    amberLight.position.set(25, -10, 30);
-    scene.add(amberLight);
-
-    // 7. Mouse interaction
+    // 7. Silky Mouse Interpolation & Velocity Tracking
     let mouseX = 0;
     let mouseY = 0;
-    let targetMouseX = 0;
-    let targetMouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let mouseVelocity = 0;
+    let lastClientX = 0;
+    let lastClientY = 0;
 
     const onMouseMove = (e: MouseEvent) => {
-      const windowHalfX = window.innerWidth / 2;
-      const windowHalfY = window.innerHeight / 2;
-      targetMouseX = (e.clientX - windowHalfX) * 0.0008;
-      targetMouseY = (e.clientY - windowHalfY) * 0.0008;
+      const halfW = window.innerWidth / 2;
+      const halfH = window.innerHeight / 2;
+      targetX = (e.clientX - halfW) / halfW;
+      targetY = (e.clientY - halfH) / halfH;
+
+      const dx = e.clientX - lastClientX;
+      const dy = e.clientY - lastClientY;
+      mouseVelocity = Math.sqrt(dx * dx + dy * dy) * 0.001;
+      lastClientX = e.clientX;
+      lastClientY = e.clientY;
     };
 
     window.addEventListener("mousemove", onMouseMove);
 
-    // Resize handler
     const onResize = () => {
       if (!container) return;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+      renderer.setSize(w, h);
+
+      // Reposition on smaller screens
+      if (w < 900) {
+        liquidCore.position.set(0, 6, -10);
+        outerCage.position.set(0, 6, -10);
+        orbitalGroup.position.set(0, 6, -10);
+      } else {
+        liquidCore.position.set(12, 1, -4);
+        outerCage.position.set(12, 1, -4);
+        orbitalGroup.position.set(12, 1, -4);
+      }
     };
 
+    onResize();
     window.addEventListener("resize", onResize);
 
-    // 8. Animation loop
+    // 8. Fluid Render Loop with Procedural Surface Waves
     const clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      const elapsed = clock.getElapsedTime();
 
-      // Smooth mouse interpolation
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
+      // Silky lerp
+      mouseX += (targetX - mouseX) * 0.045;
+      mouseY += (targetY - mouseY) * 0.045;
+      mouseVelocity *= 0.95;
 
-      camera.position.x = mouseX * 45;
-      camera.position.y = 24 - mouseY * 30;
+      // Parallax camera rotation
+      camera.position.x = mouseX * 8;
+      camera.position.y = -mouseY * 6;
       camera.lookAt(0, 0, 0);
 
-      // Animate undulating financial cashflow wave
-      const posArr = positionAttribute.array as Float32Array;
+      // Morphing liquid surface deformation
+      const posArr = posAttribute.array as Float32Array;
+      const waveFreq = 0.35 + mouseVelocity * 0.5;
+      const waveAmp = 1.15 + mouseVelocity * 2.0;
+
       for (let i = 0; i < posArr.length; i += 3) {
-        const x = basePositions[i];
-        const y = basePositions[i + 1];
-        // Dynamic sine/cosine yield wave calculation
-        const z =
-          Math.sin(x * 0.08 + elapsedTime * 1.5) * 3.8 +
-          Math.cos(y * 0.09 + elapsedTime * 1.2) * 3.2 +
-          Math.sin((x + y) * 0.05 + elapsedTime * 0.8) * 2.0;
+        const ox = originalPositions[i];
+        const oy = originalPositions[i + 1];
+        const oz = originalPositions[i + 2];
 
-        posArr[i + 2] = z;
+        // Normalizing vector for radial displacement
+        const len = Math.sqrt(ox * ox + oy * oy + oz * oz);
+        const nx = ox / len;
+        const ny = oy / len;
+        const nz = oz / len;
+
+        const vIdx = i / 3;
+        const offset = noiseOffsets[vIdx];
+
+        // Complex liquid harmonic displacement
+        const displacement =
+          Math.sin(ox * waveFreq + elapsed * 1.8 + offset) *
+          Math.cos(oy * waveFreq + elapsed * 1.4) *
+          Math.sin(oz * waveFreq + elapsed * 1.1) *
+          waveAmp;
+
+        const newR = sphereRadius + displacement;
+        posArr[i] = nx * newR;
+        posArr[i + 1] = ny * newR;
+        posArr[i + 2] = nz * newR;
       }
-      positionAttribute.needsUpdate = true;
+      posAttribute.needsUpdate = true;
+      sphereGeo.computeVertexNormals();
 
-      // Animate floating financial shapes
-      torus.rotation.x = elapsedTime * 0.4;
-      torus.rotation.y = elapsedTime * 0.6;
-      torus.position.y = 8 + Math.sin(elapsedTime * 1.5) * 1.8;
+      // Liquid core dynamic tilt and rotation
+      liquidCore.rotation.y = elapsed * 0.15 + mouseX * 0.4;
+      liquidCore.rotation.x = elapsed * 0.08 - mouseY * 0.3;
 
-      ico.rotation.x = elapsedTime * 0.5;
-      ico.rotation.y = elapsedTime * 0.35;
-      ico.position.y = 6 + Math.cos(elapsedTime * 1.2) * 1.5;
+      outerCage.rotation.y = -elapsed * 0.1;
+      outerCage.rotation.z = elapsed * 0.06;
 
-      octahedron.rotation.y = elapsedTime * 0.8;
-      octahedron.rotation.z = elapsedTime * 0.4;
-      octahedron.position.y = 16 + Math.sin(elapsedTime * 2.0) * 1.2;
+      // Orbiting astrolabe rings
+      ring1.rotation.z = elapsed * 0.2;
+      ring2.rotation.z = -elapsed * 0.16;
+      ring3.rotation.x = Math.PI / 2.2 + Math.sin(elapsed * 0.4) * 0.15;
+      ring3.rotation.z = elapsed * 0.25;
 
-      // Slow particle rotation
-      particleSystem.rotation.y = elapsedTime * 0.04;
-      particleSystem.rotation.x = Math.sin(elapsedTime * 0.05) * 0.05;
+      // Ambient particle slow cosmos drift
+      ambientField.rotation.y = elapsed * 0.015;
+      ambientField.rotation.x = Math.sin(elapsed * 0.02) * 0.04;
 
       renderer.render(scene, camera);
     };
@@ -248,17 +304,13 @@ export function ThreeFinanceCanvas() {
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(animationFrameId);
 
-      geometry.dispose();
-      wireframeMaterial.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
-      torusGeo.dispose();
-      goldMat.dispose();
-      icoGeo.dispose();
-      emeraldMat.dispose();
-      octGeo.dispose();
-      octMat.dispose();
-      particleTexture.dispose();
+      sphereGeo.dispose();
+      liquidChromeMaterial.dispose();
+      outerCageGeo.dispose();
+      outerCageMat.dispose();
+      fieldGeo.dispose();
+      fieldMat.dispose();
+      dotTexture.dispose();
 
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
