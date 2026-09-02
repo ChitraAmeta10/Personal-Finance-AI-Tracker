@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.models.enums import AccountType
+from typing import Optional
 
 
 class Account(Base):
@@ -18,7 +19,7 @@ class Account(Base):
         Enum(AccountType, values_callable=lambda e: [m.value for m in e], native_enum=False, length=20),
         nullable=False,
     )
-    institution: Mapped[str | None] = mapped_column(String(120))
+    institution: Mapped[Optional[str]] = mapped_column(String(120))
     currency: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
