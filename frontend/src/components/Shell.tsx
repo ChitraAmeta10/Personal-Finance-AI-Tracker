@@ -15,23 +15,25 @@ export type Page = "dashboard" | "transactions" | "accounts" | "imports" | "ask"
 
 const NAV: { section: string; items: { page: Page; label: string; icon: ReactNode }[] }[] = [
   {
-    section: "Overview",
+    section: "OVERVIEW",
     items: [
-      { page: "dashboard", label: "Dashboard", icon: <IconGrid /> },
-      { page: "transactions", label: "Transactions", icon: <IconList /> },
-      { page: "accounts", label: "Accounts", icon: <IconWallet /> },
+      { page: "dashboard", label: "Dashboard", icon: <IconGrid size={16} /> },
     ],
   },
   {
-    section: "AI tools",
+    section: "MONEY",
     items: [
-      { page: "ask", label: "Ask AI", icon: <IconSpark /> },
-      { page: "accuracy", label: "AI accuracy", icon: <IconTarget /> },
+      { page: "transactions", label: "Transactions", icon: <IconList size={16} /> },
+      { page: "accounts", label: "Accounts", icon: <IconWallet size={16} /> },
+      { page: "imports", label: "Imports", icon: <IconUpload size={16} /> },
     ],
   },
   {
-    section: "Data",
-    items: [{ page: "imports", label: "Imports", icon: <IconUpload /> }],
+    section: "INTELLIGENCE",
+    items: [
+      { page: "ask", label: "Ask FinSight", icon: <IconSpark size={16} /> },
+      { page: "accuracy", label: "AI Accuracy", icon: <IconTarget size={16} /> },
+    ],
   },
 ];
 
@@ -44,7 +46,7 @@ interface Props {
 
 export function Shell({ page, onNavigate, onLogout, children }: Props) {
   const email = auth.email() ?? "";
-  const initials = email.slice(0, 2).toUpperCase();
+  const initials = email.slice(0, 2).toUpperCase() || "FS";
 
   return (
     <div className="shell">
@@ -57,30 +59,35 @@ export function Shell({ page, onNavigate, onLogout, children }: Props) {
             Fin<em>Sight</em>
           </span>
         </div>
+
         {NAV.map((group) => (
-          <div key={group.section}>
+          <div key={group.section} style={{ marginBottom: 12 }}>
             <div className="nav-section">{group.section}</div>
             {group.items.map((item) => (
               <button
                 key={item.page}
+                type="button"
                 className={`nav-item${page === item.page ? " active" : ""}`}
                 onClick={() => onNavigate(item.page)}
               >
                 {item.icon}
-                {item.label}
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
         ))}
+
         <div className="spacer" />
+
+        <div className="nav-section" style={{ padding: "8px 12px 4px" }}>SYSTEM</div>
         <div className="user-card">
           <span className="avatar">{initials}</span>
           <span className="who">
-            <span className="email">{email}</span>
-            <span className="role">Member</span>
+            <span className="email" title={email}>{email}</span>
+            <span className="role">Verified Enclave</span>
           </span>
-          <button className="out" onClick={onLogout} title="Sign out">
-            <IconOut />
+          <button className="out" onClick={onLogout} title="Sign out" aria-label="Sign out">
+            <IconOut size={16} />
           </button>
         </div>
       </aside>

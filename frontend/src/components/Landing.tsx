@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { ThreeFinanceCanvas } from "./landing/ThreeFinanceCanvas";
 import { CustomCursor } from "./landing/CustomCursor";
-import { InteractiveHeroVisual } from "./landing/InteractiveHeroVisual";
+import { DashboardFloatingPreview } from "./landing/DashboardFloatingPreview";
 import { MoraliaMovingGallery } from "./landing/MoraliaMovingGallery";
 import { HorizontalShowcase } from "./landing/HorizontalShowcase";
 import { StatementLaboratory } from "./landing/StatementLaboratory";
@@ -24,7 +24,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
         particleCount: 85,
         spread: 75,
         origin: { y: 0.65 },
-        colors: ["#cca77c", "#ffffff", "#00f59b", "#dfc2a0"],
+        colors: ["#C5A46D", "#0B3D35", "#FFFFFF", "#F6F3EC"],
       });
     } catch {
       // safe fallback
@@ -39,20 +39,20 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       {/* Precision Luxury Custom Cursor */}
       <CustomCursor />
 
-      {/* Subtle Fluid Velvet WebGL Ambient Shader (No cheesy wireframes) */}
+      {/* Subtle Warm Ambiance Shader (Rose Family Inspired) */}
       <ThreeFinanceCanvas />
       <div className="m-bg-vignette" />
 
       <div className="landing-content-layer">
-        {/* ==================== ARCHITECTURAL TOP TELEMETRY ==================== */}
+        {/* ==================== TELEMETRY STRIP ==================== */}
         <div className="lux-telemetry-strip">
           <div className="tel-active">
             <span className="pulse-dot" />
-            <span>AI ENCLAVE // ONLINE</span>
+            <span>FINSIGHT ENCLAVE // VERIFIED</span>
           </div>
-          <div>MODEL: CLAUDE 3.5 SONNET HYBRID</div>
-          <div>LATENCY: 0.8MS</div>
-          <div>74 UNIT TESTS PASSING</div>
+          <div>HYBRID PARSER: ZERO-INJECTION SQL</div>
+          <div>DETERMINISTIC LATENCY: &lt; 0.8MS</div>
+          <div>74 UNIT TESTS VERIFIED</div>
         </div>
 
         {/* ==================== EDITORIAL NAVIGATION ==================== */}
@@ -79,32 +79,28 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               onClick={triggerGetStarted}
               data-cursor="ENTER"
             >
-              <span className="btn-circle-gold">
-                <ArrowUpRight size={13} color="currentColor" />
-              </span>
               <span>Get Started</span>
+              <ArrowUpRight size={13} />
             </button>
           </div>
         </header>
 
-        {/* ==================== HERO: MONUMENTAL TITLE + 3D TITANIUM CARD ==================== */}
+        {/* ==================== HERO: FULL-SCREEN EDITORIAL ==================== */}
         <main>
           <section className="m-hero">
             <div className="m-hero-left">
               <div className="m-meta-pill">
-                <span>[</span>
-                <span>AUTONOMOUS FINANCIAL INTELLIGENCE // 2026</span>
-                <span>]</span>
+                <span>PERSONAL FINANCIAL INTELLIGENCE</span>
               </div>
 
               <h1 className="m-hero-title">
-                Contemporary Intelligence for <em>Modern Wealth</em>.
+                See your money<br />
+                <em>differently.</em>
               </h1>
 
               <p className="m-hero-lede">
-                FinSight normalizes messy bank statements with mathematical determinism and batched
-                Claude 3.5 reasoning, answering natural language queries in real time with
-                zero-injection SQL.
+                Turn your bank statements into clear financial insights
+                and ask questions about your money in plain English.
               </p>
 
               <div className="m-hero-actions">
@@ -114,28 +110,34 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                   onClick={triggerGetStarted}
                   data-cursor="START"
                 >
-                  <span>Initiate Tracking</span>
+                  <span>Get Started</span>
                   <ArrowUpRight size={14} />
                 </button>
                 <a href="#showcase" className="btn-m-gold" data-cursor="EXPLORE">
-                  <span className="btn-circle-gold">
-                    <ArrowUpRight size={13} color="currentColor" />
-                  </span>
-                  <span>Explore Subsystems</span>
+                  <span>Explore FinSight</span>
+                  <ArrowUpRight size={13} />
                 </a>
               </div>
             </div>
 
             <div className="m-hero-right">
-              {/* Interactive 3D Titanium Card / Analytics Matrix with Gyro Tilt */}
-              <InteractiveHeroVisual />
+              {/* Beautiful Floating Preview of the FinSight Dashboard */}
+              <DashboardFloatingPreview />
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="hero-scroll-indicator">
+              <a href="#showcase" className="scroll-arrow-link" data-cursor="SCROLL">
+                <span>SCROLL</span>
+                <span className="down-arrow">↓</span>
+              </a>
             </div>
           </section>
 
-          {/* ==================== ROSE FAMILY EDITORIAL LIST (Floating Preview) ==================== */}
+          {/* ==================== SECTION 01: ARCHITECTURAL SUBSYSTEMS (Floating Hover Preview) ==================== */}
           <section id="showcase" className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">01 / Architectural Subsystems</span>
+              <span className="m-section-tag">01 / ARCHITECTURAL SUBSYSTEMS</span>
               <h2 className="m-section-title">Engineered for <em>Total Visibility</em></h2>
               <p className="m-section-desc">
                 An overview of FinSight's core layers — from polyglot database persistence to verifiable SQL synthesis.
@@ -148,7 +150,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           {/* ==================== SECTION 02: SLIDE SHOWCASE ==================== */}
           <section className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">02 / Interactive Walkthrough</span>
+              <span className="m-section-tag">02 / INTERACTIVE WALKTHROUGH</span>
               <h2 className="m-section-title">Deep-Dive <em>System Artifacts</em></h2>
               <p className="m-section-desc">
                 Interactive walkthrough of FinSight's core engine: hybrid rule dispatch, text-to-SQL
@@ -162,7 +164,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           {/* ==================== SECTION 03: INGESTION LABORATORY ==================== */}
           <section id="laboratory" className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">03 / Normalization Lab</span>
+              <span className="m-section-tag">03 / NORMALIZATION LAB</span>
               <h2 className="m-section-title">Format-Agnostic <em>Ingestion</em></h2>
               <p className="m-section-desc">
                 Test raw transaction strings across Amex, Chase, and SVB. Observe real-time SHA-256
@@ -176,7 +178,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           {/* ==================== SECTION 04: NEURAL TEXT-TO-SQL TERMINAL ==================== */}
           <section id="sandbox" className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">04 / Neural Query Engine</span>
+              <span className="m-section-tag">04 / NEURAL QUERY ENGINE</span>
               <h2 className="m-section-title">Natural Language <em>Text-to-SQL</em></h2>
               <p className="m-section-desc">
                 Inquire in everyday English. Every statement is validated through abstract syntax
@@ -190,7 +192,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           {/* ==================== SECTION 05: CAPITAL YIELD CALCULATOR ==================== */}
           <section id="calculator" className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">05 / Capital Recovery</span>
+              <span className="m-section-tag">05 / CAPITAL RECOVERY</span>
               <h2 className="m-section-title">Recoverable Leaks &amp; <em>Compounding</em></h2>
               <p className="m-section-desc">
                 Simulate quantified capital salvaged from unnoticed billing escalations, recurring SaaS
@@ -204,7 +206,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
           {/* ==================== SECTION 06: ARCHITECTURAL PIPELINE ==================== */}
           <section id="pipeline" className="m-section">
             <div className="m-section-header">
-              <span className="m-section-tag">06 / Execution Flow</span>
+              <span className="m-section-tag">06 / EXECUTION FLOW</span>
               <h2 className="m-section-title">The 4-Stage <em>Ingestion Pipeline</em></h2>
               <p className="m-section-desc">
                 How raw bank CSVs transform into validated financial ledger records in under 500ms.
@@ -213,49 +215,26 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
             <PipelineVisualizer />
           </section>
-
-          {/* ==================== EDITORIAL LUXURY FOOTER ==================== */}
-          <footer className="m-footer">
-            <div className="m-footer-top">
-              <div className="m-footer-brand">
-                Fin<em>Sight</em>
-              </div>
-              <div className="m-footer-links">
-                <span>FASTAPI</span>
-                <span>·</span>
-                <span>POSTGRESQL 16</span>
-                <span>·</span>
-                <span>CLAUDE 3.5</span>
-                <span>·</span>
-                <span>MONGODB 7</span>
-                <span>·</span>
-                <span>REACT</span>
-              </div>
-            </div>
-
-            <div className="m-footer-bottom">
-              <div>
-                &copy; {new Date().getFullYear()} FINSIGHT INTELLIGENCE &bull; ALL RIGHTS RESERVED
-              </div>
-              <div>
-                74 PYTEST SUITES PASSING &bull; IDEMPOTENT DEDUP
-              </div>
-              <div>
-                <button
-                  type="button"
-                  className="btn-m-gold"
-                  onClick={triggerGetStarted}
-                  data-cursor="ENTER"
-                >
-                  <span className="btn-circle-gold">
-                    <ArrowUpRight size={13} color="currentColor" />
-                  </span>
-                  <span>Launch Platform</span>
-                </button>
-              </div>
-            </div>
-          </footer>
         </main>
+
+        {/* ==================== EDITORIAL LUXURY FOOTER ==================== */}
+        <footer className="m-footer">
+          <div className="m-footer-top">
+            <div className="m-footer-brand">
+              Fin<em>Sight</em>
+            </div>
+            <div className="m-footer-links">
+              <span>TENANT ISOLATED</span>
+              <span>AES-256 HARDWARE SECURE</span>
+              <span>POSTGRESQL 16</span>
+              <span>CLAUDE 3.5 SONNET</span>
+            </div>
+          </div>
+          <div className="m-footer-bottom">
+            <span>&copy; {new Date().getFullYear()} FinSight Systems Inc. All rights reserved.</span>
+            <span>Architectural Personal Finance Intelligence.</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

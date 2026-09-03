@@ -15,22 +15,32 @@ export function ImportsPage() {
   return (
     <div>
       <div className="page-head">
-        <h1>Imports</h1>
-        <span className="crumb">CSV statements in, categorized transactions out</span>
+        <div>
+          <span className="editorial-kicker">STATEMENT INGESTION</span>
+          <h1>Bring your statements.</h1>
+          <p className="editorial-lead" style={{ margin: 0 }}>
+            Upload a CSV and let FinSight organize your financial activity.
+          </p>
+        </div>
+        <span className="crumb">{batches.length} batches recorded</span>
       </div>
+
       <div className="grid split-row">
         <div className="card">
-          <h2>Upload a statement</h2>
+          <span className="editorial-kicker">INGESTION PORTAL</span>
+          <h2>Upload a Statement</h2>
           {accounts === null ? (
-            <div className="empty">Loading…</div>
+            <div className="empty">Loading accounts…</div>
           ) : (
             <UploadPanel accounts={accounts} onDataChanged={refresh} />
           )}
         </div>
+
         <div className="card">
-          <h2>Import history</h2>
+          <span className="editorial-kicker">AUDIT LEDGER</span>
+          <h2>Import History</h2>
           {batches.length === 0 ? (
-            <div className="empty">No imports yet.</div>
+            <div className="empty">No past statements on record.</div>
           ) : (
             <table>
               <thead>
@@ -44,16 +54,28 @@ export function ImportsPage() {
               <tbody>
                 {batches.map((batch) => (
                   <tr key={batch.id}>
-                    <td style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <td
+                      style={{
+                        maxWidth: 180,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontWeight: 500,
+                      }}
+                    >
                       {batch.filename}
                     </td>
                     <td>
-                      <span className={`pill ${batch.status === "completed" ? "" : "red"}`}>{batch.status}</span>
+                      <span className={`pill ${batch.status === "completed" ? "" : "red"}`}>
+                        {batch.status.toUpperCase()}
+                      </span>
                     </td>
                     <td className="num">
                       {batch.imported_rows}/{batch.total_rows}
                     </td>
-                    <td className="num">{batch.duplicate_rows}</td>
+                    <td className="num" style={{ color: "var(--gold)" }}>
+                      {batch.duplicate_rows}
+                    </td>
                   </tr>
                 ))}
               </tbody>

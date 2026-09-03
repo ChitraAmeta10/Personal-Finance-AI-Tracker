@@ -8,10 +8,10 @@ interface Props {
   onBack?: () => void;
 }
 
-const POINTS = [
-  "Upload any bank CSV — duplicates are detected automatically",
-  "AI categorizes every transaction and shows you how it decided",
-  "Ask questions in plain English, answered with validated SQL",
+const HIGHLIGHTS = [
+  "Deterministic rule-first normalization with SHA-256 fingerprinting",
+  "Zero-injection SQL query engine backed by Claude 3.5 Sonnet",
+  "Sub-millisecond executive cashflow analytics on multi-currency ledgers",
 ];
 
 export function Login({ initialMode = "login", onLogin, onBack }: Props) {
@@ -30,7 +30,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
       await api.login(email, password);
       onLogin();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong");
+      setError(err instanceof ApiError ? err.message : "Authentication failed. Please verify your credentials.");
     } finally {
       setBusy(false);
     }
@@ -38,79 +38,102 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
 
   return (
     <div className="auth-wrap">
+      {/* Left Editorial Brand Enclave */}
       <aside className="auth-side">
         <div className="brand-row">
           <span className="logo-mark">
-            <LogoMark size={16} />
+            <LogoMark size={18} />
           </span>
           <span className="name">
             Fin<em>Sight</em>
           </span>
         </div>
+
         <div className="pitch">
+          <span className="editorial-kicker">Autonomous Intelligence</span>
           <h2>
-            Every dollar,
+            Your financial data
             <br />
-            <em>accounted for.</em>
+            <em>has a story.</em>
           </h2>
           <p>
-            FinSight turns raw bank statements into categorized spending, live insights, and
-            answers to questions you'd normally build a spreadsheet for.
+            Transform chaotic statements into structured clarity. Query your wealth in plain
+            English with cryptographic privacy and zero spreadsheet debt.
           </p>
           <div className="points">
-            {POINTS.map((point) => (
+            {HIGHLIGHTS.map((point) => (
               <div className="point" key={point}>
                 <span className="tick">✓</span>
-                {point}
+                <span>{point}</span>
               </div>
             ))}
           </div>
         </div>
-        <div className="foot">Your data stays yours — every query is scoped to your account.</div>
+
+        <div className="foot">
+          Tenant-isolated enclave · All queries strictly scoped to authenticated credentials
+        </div>
       </aside>
 
+      {/* Right Minimal Form */}
       <div className="auth-form-side">
-        <form className="card auth-card" onSubmit={submit}>
-          <h2>{mode === "login" ? "Welcome back" : "Create your account"}</h2>
+        <form className="auth-card" onSubmit={submit}>
+          <span className="editorial-kicker">
+            {mode === "login" ? "Security Portal" : "Join FinSight"}
+          </span>
+          <h2>{mode === "login" ? "Welcome back." : "Create your enclave."}</h2>
           <p className="lead">
             {mode === "login"
-              ? "Sign in to see your dashboard."
-              : "Takes ten seconds — just an email and a password."}
+              ? "Authenticate to access your real-time ledger."
+              : "Set up in moments with your email and master passphrase."}
           </p>
-          <label htmlFor="email">Email</label>
+
+          <label htmlFor="email">Work or Personal Email</label>
           <input
             id="email"
             type="email"
+            placeholder="name@domain.com"
             autoComplete="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <label htmlFor="password">Password</label>
+
+          <label htmlFor="password">Passphrase (Min. 8 Characters)</label>
           <input
             id="password"
             type="password"
+            placeholder="••••••••••••"
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             required
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+          {error && <div className="error">{error}</div>}
+
           <div className="form-actions">
             <button type="submit" disabled={busy}>
-              {busy ? "One moment…" : mode === "login" ? "Sign in" : "Create account"}
+              {busy ? "Authenticating…" : mode === "login" ? "Sign In" : "Create Account"}
             </button>
             {onBack && (
               <button type="button" className="secondary" onClick={onBack}>
-                Back
+                Return to Overview
               </button>
             )}
           </div>
-          {error && <div className="error">{error}</div>}
+
           <div className="auth-switch">
-            {mode === "login" ? "New to FinSight? " : "Already have an account? "}
-            <button type="button" onClick={() => setMode(mode === "login" ? "register" : "login")}>
-              {mode === "login" ? "Create an account" : "Sign in"}
+            {mode === "login" ? "New to FinSight? " : "Already registered? "}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === "login" ? "register" : "login");
+                setError(null);
+              }}
+            >
+              {mode === "login" ? "Request Enclave Access" : "Sign into Existing Account"}
             </button>
           </div>
         </form>
