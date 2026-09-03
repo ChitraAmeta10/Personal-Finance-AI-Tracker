@@ -36,6 +36,9 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
   return (
     <div className="landing-awwwards">
+      {/* Analog Film Grain Texture Overlay (Awwwards Grade) */}
+      <div className="analog-film-grain" />
+
       {/* Precision Luxury Custom Cursor */}
       <CustomCursor />
 
@@ -133,6 +136,36 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               </a>
             </div>
           </section>
+
+          {/* ==================== KINETIC MARQUEE RIBBON ==================== */}
+          <div className="kinetic-marquee-section" aria-hidden="true">
+            <div className="kinetic-marquee-track">
+              <span className="marquee-phrase">
+                <span>AUTONOMOUS WEALTH</span>
+                <span className="marquee-dot" />
+                <span>ZERO <em>SPREADSHEETS</em></span>
+                <span className="marquee-dot" />
+                <span>DETERMINISTIC INTELLIGENCE</span>
+                <span className="marquee-dot" />
+                <span>VERIFIED <em>SQL AST</em></span>
+                <span className="marquee-dot" />
+                <span>SUB-MS <em>RECONCILIATION</em></span>
+                <span className="marquee-dot" />
+              </span>
+              <span className="marquee-phrase">
+                <span>AUTONOMOUS WEALTH</span>
+                <span className="marquee-dot" />
+                <span>ZERO <em>SPREADSHEETS</em></span>
+                <span className="marquee-dot" />
+                <span>DETERMINISTIC INTELLIGENCE</span>
+                <span className="marquee-dot" />
+                <span>VERIFIED <em>SQL AST</em></span>
+                <span className="marquee-dot" />
+                <span>SUB-MS <em>RECONCILIATION</em></span>
+                <span className="marquee-dot" />
+              </span>
+            </div>
+          </div>
 
           {/* ==================== SECTION 01: ARCHITECTURAL SUBSYSTEMS (Floating Hover Preview) ==================== */}
           <section id="showcase" className="m-section">
