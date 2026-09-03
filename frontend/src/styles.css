@@ -293,6 +293,101 @@ body {
   .main { padding: 24px 16px; }
 }
 
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-head h1 {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 4px 0 6px;
+  color: var(--text-primary);
+}
+
+.crumb {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.editorial-lead {
+  font-size: 14.5px;
+  color: var(--text-secondary);
+}
+
+.ask-box {
+  display: flex;
+  gap: 12px;
+}
+
+.ask-box input {
+  flex: 1;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.ask-box input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(30, 30, 30, 0.05);
+}
+
+.ask-box button {
+  background: var(--brand);
+  color: #FFFFFF;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ask-box button:hover:not(:disabled) {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+.suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suggestions button {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.suggestions button:hover {
+  background: var(--yellow);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1E1E1E;
+}
+
 /* Cards & Panels */
 .card {
   background: var(--surface-1);
