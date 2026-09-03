@@ -11,7 +11,13 @@ export function ThreeFinanceCanvas() {
     let animationFrameId: number;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 45;
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -22,109 +28,56 @@ export function ThreeFinanceCanvas() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Warm champagne and charcoal ambient light dynamics — ZERO GREEN
-    const vertexShader = `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 1.0);
-      }
-    `;
+    // Warm, poetic, champagne-amber micro-particle ambiance (Rose Family style)
+    const count = 280;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
 
-    const fragmentShader = `
-      uniform float uTime;
-      uniform vec2 uResolution;
-      uniform vec2 uMouse;
-      varying vec2 vUv;
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 90;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 65;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 45;
+    }
 
-      vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-      vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-      vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-      float snoise(vec2 v) {
-        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                            -0.577350269189626, 0.024390243902439);
-        vec2 i  = floor(v + dot(v, C.yy) );
-        vec2 x0 = v -   i + dot(i, C.xx);
-        vec2 i1  = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-        vec4 x12 = x0.xyxy + C.xxzz;
-        x12.xy -= i1;
-        i = mod289(i);
-        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-        + i.x + vec3(0.0, i1.x, 1.0 ));
-        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-        m = m*m ;
-        m = m*m ;
-        vec3 x = 2.0 * fract(p * C.www) - 1.0;
-        vec3 h = abs(x) - 0.5;
-        vec3 ox = floor(x + 0.5);
-        vec3 a0 = x - ox;
-        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-        vec3 g;
-        g.x  = a0.x  * x0.x  + h.x  * x0.y;
-        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-        return 130.0 * dot(m, g);
-      }
+    // Soft champagne radial glow canvas texture
+    const canvas = document.createElement("canvas");
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+      grad.addColorStop(0, "rgba(245, 239, 230, 0.85)");
+      grad.addColorStop(0.4, "rgba(209, 189, 162, 0.3)");
+      grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 32, 32);
+    }
+    const texture = new THREE.CanvasTexture(canvas);
 
-      void main() {
-        vec2 st = gl_FragCoord.xy / uResolution.xy;
-        st.x *= uResolution.x / uResolution.y;
-
-        vec2 mouse = uMouse;
-        mouse.x *= uResolution.x / uResolution.y;
-
-        float t = uTime * 0.08;
-
-        float n1 = snoise(st * 0.7 + vec2(t * 0.3, t * 0.15));
-        float n2 = snoise(st * 1.4 - vec2(t * 0.2, t * 0.3) + n1 * 0.4);
-
-        float distToMouse = distance(st, mouse);
-        float mouseGlow = smoothstep(0.75, 0.0, distToMouse) * 0.28;
-
-        // Luxurious warm champagne (#cca77c) and dark obsidian (#0e1110) — NO GREEN
-        vec3 champagne = vec3(0.80, 0.65, 0.48);
-        vec3 warmBronze = vec3(0.48, 0.36, 0.25);
-        vec3 warmCharcoal = vec3(0.06, 0.06, 0.07);
-
-        vec3 color = warmCharcoal;
-        color += warmBronze * (n1 * 0.4 + 0.4);
-        color += champagne * (pow(n2 * 0.5 + 0.5, 3.8) * 0.15);
-        color += champagne * mouseGlow;
-
-        // Alpha is semi-transparent so the background image shows through beautifully
-        float alpha = clamp(length(color) * 0.85, 0.2, 0.75);
-
-        gl_FragColor = vec4(color, alpha);
-      }
-    `;
-
-    const uniforms = {
-      uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
-      uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-    };
-
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms,
+    const material = new THREE.PointsMaterial({
+      size: 0.9,
+      map: texture,
       transparent: true,
+      opacity: 0.4,
+      blending: THREE.AdditiveBlending,
       depthWrite: false,
-      depthTest: false,
     });
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const quad = new THREE.Mesh(geometry, material);
-    scene.add(quad);
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
 
-    let mouseX = 0.5;
-    let mouseY = 0.5;
-    let targetMouseX = 0.5;
-    let targetMouseY = 0.5;
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
 
     const onMouseMove = (e: MouseEvent) => {
-      targetMouseX = e.clientX / window.innerWidth;
-      targetMouseY = 1.0 - e.clientY / window.innerHeight;
+      const halfW = window.innerWidth / 2;
+      const halfH = window.innerHeight / 2;
+      targetX = (e.clientX - halfW) / halfW;
+      targetY = (e.clientY - halfH) / halfH;
     };
 
     window.addEventListener("mousemove", onMouseMove);
@@ -133,8 +86,9 @@ export function ThreeFinanceCanvas() {
       if (!container) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      uniforms.uResolution.value.set(w, h);
     };
 
     window.addEventListener("resize", onResize);
@@ -143,11 +97,14 @@ export function ThreeFinanceCanvas() {
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      uniforms.uTime.value = clock.getElapsedTime();
+      const elapsed = clock.getElapsedTime();
 
-      mouseX += (targetMouseX - mouseX) * 0.04;
-      mouseY += (targetMouseY - mouseY) * 0.04;
-      uniforms.uMouse.value.set(mouseX, mouseY);
+      // Gentle, calm breathing drift
+      mouseX += (targetX - mouseX) * 0.02;
+      mouseY += (targetY - mouseY) * 0.02;
+
+      points.rotation.y = elapsed * 0.012 + mouseX * 0.05;
+      points.rotation.x = elapsed * 0.008 - mouseY * 0.05;
 
       renderer.render(scene, camera);
     };
@@ -161,6 +118,7 @@ export function ThreeFinanceCanvas() {
 
       geometry.dispose();
       material.dispose();
+      texture.dispose();
 
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);

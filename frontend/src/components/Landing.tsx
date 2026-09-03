@@ -132,25 +132,24 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
           </section>
 
-          {/* ==================== MORALIA MOVING PICTURE SHOWCASE (Cursor-Following Floating Image) ==================== */}
+          {/* ==================== ROSE FAMILY EDITORIAL LIST (Floating Preview) ==================== */}
           <section id="showcase" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 01 // MOVING GALLERY ]</div>
-              <h2 className="m-section-title">Architectural <em>Subsystems</em></h2>
+              <span className="m-section-tag">01 / Architectural Subsystems</span>
+              <h2 className="m-section-title">Engineered for <em>Total Visibility</em></h2>
               <p className="m-section-desc">
-                Hover across each engineering layer to unveil the floating dynamic telemetry and
-                high-resolution visual artifacts.
+                An overview of FinSight's core layers — from polyglot database persistence to verifiable SQL synthesis.
               </p>
             </div>
 
             <MoraliaMovingGallery />
           </section>
 
-          {/* ==================== SECTION 02: 2026 GEN-Z HORIZONTAL SLIDER ==================== */}
+          {/* ==================== SECTION 02: SLIDE SHOWCASE ==================== */}
           <section className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 02 // SLIDE SHOWCASE ]</div>
-              <h2 className="m-section-title">Deep-Dive <em>Interactive Telemetry</em></h2>
+              <span className="m-section-tag">02 / Interactive Walkthrough</span>
+              <h2 className="m-section-title">Deep-Dive <em>System Artifacts</em></h2>
               <p className="m-section-desc">
                 Interactive walkthrough of FinSight's core engine: hybrid rule dispatch, text-to-SQL
                 compilers, and executive cashflow analytics.
@@ -160,11 +159,11 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <HorizontalShowcase />
           </section>
 
-          {/* ==================== SECTION 02: INGESTION LABORATORY ==================== */}
+          {/* ==================== SECTION 03: INGESTION LABORATORY ==================== */}
           <section id="laboratory" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 02 // LABORATORY ]</div>
-              <h2 className="m-section-title">Ingestion &amp; <em>Normalization</em></h2>
+              <span className="m-section-tag">03 / Normalization Lab</span>
+              <h2 className="m-section-title">Format-Agnostic <em>Ingestion</em></h2>
               <p className="m-section-desc">
                 Test raw transaction strings across Amex, Chase, and SVB. Observe real-time SHA-256
                 fingerprinting and confidence scoring.
@@ -174,10 +173,10 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <StatementLaboratory />
           </section>
 
-          {/* ==================== SECTION 03: NEURAL TEXT-TO-SQL TERMINAL ==================== */}
+          {/* ==================== SECTION 04: NEURAL TEXT-TO-SQL TERMINAL ==================== */}
           <section id="sandbox" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 03 // QUANT TERMINAL ]</div>
+              <span className="m-section-tag">04 / Neural Query Engine</span>
               <h2 className="m-section-title">Natural Language <em>Text-to-SQL</em></h2>
               <p className="m-section-desc">
                 Inquire in everyday English. Every statement is validated through abstract syntax
@@ -188,11 +187,11 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <InteractiveTerminal />
           </section>
 
-          {/* ==================== SECTION 04: CAPITAL YIELD CALCULATOR ==================== */}
+          {/* ==================== SECTION 05: CAPITAL YIELD CALCULATOR ==================== */}
           <section id="calculator" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 04 // CAPITAL YIELD ]</div>
-              <h2 className="m-section-title">Recoverable Leaks &amp; <em>Wealth Compounding</em></h2>
+              <span className="m-section-tag">05 / Capital Recovery</span>
+              <h2 className="m-section-title">Recoverable Leaks &amp; <em>Compounding</em></h2>
               <p className="m-section-desc">
                 Simulate quantified capital salvaged from unnoticed billing escalations, recurring SaaS
                 drift, and manual accounting hours.
@@ -202,10 +201,10 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             <FinancialCalculator onCtaClick={triggerGetStarted} />
           </section>
 
-          {/* ==================== SECTION 05: ARCHITECTURAL PIPELINE ==================== */}
+          {/* ==================== SECTION 06: ARCHITECTURAL PIPELINE ==================== */}
           <section id="pipeline" className="m-section">
             <div className="m-section-header">
-              <div className="m-section-tag">[ 05 // PIPELINE ]</div>
+              <span className="m-section-tag">06 / Execution Flow</span>
               <h2 className="m-section-title">The 4-Stage <em>Ingestion Pipeline</em></h2>
               <p className="m-section-desc">
                 How raw bank CSVs transform into validated financial ledger records in under 500ms.

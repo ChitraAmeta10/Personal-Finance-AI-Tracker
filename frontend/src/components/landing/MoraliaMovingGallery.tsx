@@ -13,9 +13,9 @@ interface ShowcaseRow {
 const ROWS: ShowcaseRow[] = [
   {
     num: "01",
-    category: "LEDGER & ANALYTICS",
+    category: "CORE LEDGER & ANALYTICS",
     title: "Autonomous Cashflow Engine",
-    desc: "PostgreSQL 16 & MongoDB 7 polyglot telemetry. Real-time burn velocity and category distribution on a colorblind-safe spectrum.",
+    desc: "PostgreSQL 16 & MongoDB 7 polyglot persistence. Real-time spend velocity, category donuts, and month-over-month trends on a colorblind-safe spectrum.",
     image: "/images/dashboard-dark.png",
     tags: ["RULES FIRST", "DEDUP HASH", "RECHARTS"],
   },
@@ -23,7 +23,7 @@ const ROWS: ShowcaseRow[] = [
     num: "02",
     category: "NEURAL ENGINE",
     title: "Natural Language Text-to-SQL",
-    desc: "Conversational queries validated through sqlglot abstract syntax tree parsers with zero prompt injection.",
+    desc: "Ask complex financial questions in plain English. Verified through SQL AST parsers with zero prompt-injection vectors.",
     image: "/images/ask-ai.png",
     tags: ["SELECT ONLY", "AUDIT TRAIL", "CLAUDE 3.5"],
   },
@@ -31,17 +31,17 @@ const ROWS: ShowcaseRow[] = [
     num: "03",
     category: "PHYSICAL ARCHITECTURE",
     title: "FinSight Black Platinum",
-    desc: "Matte black obsidian titanium hardware card paired with bank-grade JWT authentication and tenant isolation.",
+    desc: "Matte black obsidian titanium smart card hardware paired with bank-grade JWT authentication and tenant isolation.",
     image: "/images/card-titanium.jpg",
-    tags: ["TITANIUM FINISH", "AES-256", "HARD ISOLATION"],
+    tags: ["TITANIUM FINISH", "AES-256", "ENCLAVE"],
   },
   {
     num: "04",
-    category: "EXECUTIVE SUITE",
-    title: "Real-Time Telemetry Matrix",
-    desc: "Sub-millisecond spend ingestion, automated SaaS leak detection, and 5-year wealth compounding projections.",
+    category: "EXECUTIVE TELEMETRY",
+    title: "Real-Time Yield & Leaks",
+    desc: "Automated SaaS subscription leak detection, tax-deductible expense sorting, and 5-year wealth compounding projections.",
     image: "/images/dashboard-matrix.jpg",
-    tags: ["SUB-MS LATENCY", "LEAK DETECTOR", "RECOVERED CAPITAL"],
+    tags: ["SUB-MS LATENCY", "LEAK DETECTOR", "COMPOUNDING"],
   },
 ];
 
@@ -51,7 +51,6 @@ export function MoraliaMovingGallery() {
   const [lerpPos, setLerpPos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Mouse tracking relative to container for silky smooth floating image follower
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -60,13 +59,12 @@ export function MoraliaMovingGallery() {
     setMousePos({ x, y });
   };
 
-  // Silky lerp animation loop for the floating picture
   useEffect(() => {
     let animId: number;
     const loop = () => {
       setLerpPos((prev) => ({
-        x: prev.x + (mousePos.x - prev.x) * 0.1,
-        y: prev.y + (mousePos.y - prev.y) * 0.1,
+        x: prev.x + (mousePos.x - prev.x) * 0.08,
+        y: prev.y + (mousePos.y - prev.y) * 0.08,
       }));
       animId = requestAnimationFrame(loop);
     };
@@ -79,68 +77,64 @@ export function MoraliaMovingGallery() {
   return (
     <div
       ref={containerRef}
-      className="moralia-interactive-list"
+      className="rose-interactive-list"
       onMouseMove={handleMouseMove}
-      data-cursor="HOVER"
+      data-cursor="EXPLORE"
     >
-      {/* Floating Moving Picture (The signature Moralia cursor-following photo) */}
+      {/* Floating Picture Card Following Cursor (Rose Family Style) */}
       <div
-        className={`moralia-floating-picture ${activeIdx !== null ? "visible" : ""}`}
+        className={`rose-floating-preview ${activeIdx !== null ? "visible" : ""}`}
         style={{
-          transform: `translate3d(${lerpPos.x - 180}px, ${lerpPos.y - 120}px, 0) rotate(${
-            (lerpPos.x - mousePos.x) * -0.06
+          transform: `translate3d(${lerpPos.x - 170}px, ${lerpPos.y - 120}px, 0) rotate(${
+            (lerpPos.x - mousePos.x) * -0.04
           }deg)`,
         }}
       >
-        <div className="picture-inner-frame">
+        <div className="preview-media-box">
           <img
             src={activeRow.image}
             alt={activeRow.title}
-            className="floating-img-element"
+            className="preview-img"
           />
-          <div className="floating-img-overlay" />
-          <div className="floating-img-tag">
-            <span>[ FIG {activeRow.num} ]</span>
-            <span>{activeRow.category}</span>
+          <div className="preview-glass-tag">
+            <span className="preview-num">{activeRow.num}</span>
+            <span className="preview-cat">{activeRow.category}</span>
           </div>
         </div>
       </div>
 
       {/* Rows List */}
-      <div className="moralia-rows-wrapper">
+      <div className="rose-rows-container">
         {ROWS.map((row, idx) => {
           const isHovered = activeIdx === idx;
           return (
             <div
               key={row.num}
-              className={`moralia-list-row ${isHovered ? "active" : ""}`}
+              className={`rose-row-item ${isHovered ? "active" : ""}`}
               onMouseEnter={() => setActiveIdx(idx)}
               data-cursor="VIEW"
             >
-              <div className="row-num-col">
-                <span className="row-bracket">[</span>
-                <span className="row-num">{row.num}</span>
-                <span className="row-bracket">]</span>
+              <div className="rose-row-left">
+                <span className="rose-row-num">{row.num}</span>
+                <div className="rose-row-titles">
+                  <h3 className="rose-row-headline">{row.title}</h3>
+                  <span className="rose-row-sub">{row.category}</span>
+                </div>
               </div>
 
-              <div className="row-title-col">
-                <h3 className="row-title-text">{row.title}</h3>
-                <span className="row-category-text">{row.category}</span>
-              </div>
-
-              <div className="row-desc-col">
-                <p className="row-desc-text">{row.desc}</p>
-                <div className="row-tags-strip">
+              <div className="rose-row-center">
+                <p className="rose-row-p">{row.desc}</p>
+                <div className="rose-row-tags">
                   {row.tags.map((t, i) => (
-                    <span key={i} className="row-tag-pill">
+                    <span key={i} className="rose-tag-chip">
                       {t}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="row-action-col">
-                <span className="row-circle-btn">
+              <div className="rose-row-right">
+                <span className="rose-circle-arrow">
                   <ArrowUpRight size={14} />
                 </span>
               </div>
