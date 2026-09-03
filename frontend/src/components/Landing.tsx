@@ -1,14 +1,7 @@
 import { useEffect } from "react";
-import confetti from "canvas-confetti";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, MessageSquare, Search, Sparkles, UploadCloud } from "lucide-react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-
-import { ThreeFinanceCanvas } from "./landing/ThreeFinanceCanvas";
-import { CustomCursor } from "./landing/CustomCursor";
-import { DashboardFloatingPreview } from "./landing/DashboardFloatingPreview";
-import { InteractiveBentoGrid } from "./landing/InteractiveBentoGrid";
-import { MoraliaMovingGallery } from "./landing/MoraliaMovingGallery";
 import "./landing/landing.css";
 
 interface Props {
@@ -17,12 +10,11 @@ interface Props {
 }
 
 export function Landing({ onGetStarted, onSignIn }: Props) {
-  // 1. Lenis Smooth Momentum Scroll (Awwwards Grade Physics)
+  // Smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
       smoothWheel: true,
     });
 
@@ -39,203 +31,184 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     };
   }, []);
 
-  const triggerGetStarted = () => {
-    try {
-      confetti({
-        particleCount: 90,
-        spread: 80,
-        origin: { y: 0.65 },
-        colors: ["#00F2FE", "#8B5CF6", "#FFFFFF", "#38BDF8"],
-      });
-    } catch {
-      // safe fallback
-    }
-    setTimeout(() => {
-      onGetStarted();
-    }, 240);
-  };
-
   return (
-    <div className="landing-awwwards">
-      {/* Analog Film Grain Texture Overlay */}
-      <div className="analog-film-grain" />
+    <div className="minimal-landing">
+      <div className="minimal-bg-glow" />
 
-      {/* Precision Luxury Custom Cursor */}
-      <CustomCursor />
-
-      {/* 3D Cybernetic Three.js Particle Mesh Canvas */}
-      <ThreeFinanceCanvas />
-      <div className="m-bg-vignette" />
-
-      <div className="landing-content-layer">
-        {/* ==================== TELEMETRY STRIP ==================== */}
-        <div className="lux-telemetry-strip">
-          <div className="tel-active">
-            <span className="pulse-dot" />
-            <span>FINSIGHT ENCLAVE // VERIFIED</span>
-          </div>
-          <div>HYBRID PARSER: ZERO-INJECTION SQL</div>
-          <div>DETERMINISTIC LATENCY: &lt; 0.8MS</div>
-          <div>74/74 UNIT TESTS VERIFIED</div>
-        </div>
-
-        {/* ==================== EDITORIAL NAVIGATION ==================== */}
-        <header className="m-nav-header">
-          <a href="#" className="m-brand" data-cursor="FINSIGHT">
-            <span>Fin<em>Sight</em></span>
+      <div className="minimal-container">
+        {/* Navigation */}
+        <header className="minimal-header">
+          <a href="#" className="minimal-brand">
+            <span>FinSight</span>
+            <span className="minimal-brand-badge">AI</span>
           </a>
 
-          <nav className="m-nav-links" aria-label="Main Navigation">
-            <a href="#bento" className="m-nav-link" data-cursor="MATRIX">Bento Matrix</a>
-            <a href="#subsystems" className="m-nav-link" data-cursor="LAYERS">Subsystems</a>
-            <a href="#security" className="m-nav-link" data-cursor="SECURITY">Zero-Knowledge</a>
-          </nav>
-
-          <div className="m-nav-actions">
-            <button type="button" className="btn-m-text" onClick={onSignIn} data-cursor="LOGIN">
+          <div className="minimal-header-actions">
+            <button type="button" className="btn-ghost" onClick={onSignIn}>
               Sign In
             </button>
-            <button
-              type="button"
-              className="btn-m-gold"
-              onClick={triggerGetStarted}
-              data-cursor="ENTER"
-            >
+            <button type="button" className="btn-solid" onClick={onGetStarted}>
               <span>Get Started</span>
               <ArrowUpRight size={13} />
             </button>
           </div>
         </header>
 
-        {/* ==================== HERO: FULL-BLEED MONUMENTAL STAGE ==================== */}
+        {/* Hero */}
         <main>
-          <section className="m-hero-stage">
-            <div className="stage-top-meta">
-              <span className="stage-meta-pill">
-                <Sparkles size={12} />
-                <span>PERSONAL FINANCIAL INTELLIGENCE // 2026</span>
-              </span>
+          <section className="minimal-hero">
+            <div className="hero-pill">
+              <span className="hero-pill-dot" />
+              <span>Personal Finance AI Tracker</span>
             </div>
 
-            <h1 className="stage-hero-title">
-              See your money<br />
-              <em>differently.</em>
+            <h1 className="hero-title">
+              See your money clearly.
             </h1>
 
-            <p className="stage-hero-lede">
-              Turn your bank statements into clear financial insights
-              and ask questions about your money in plain English.
+            <p className="hero-subtitle">
+              Drop your bank statements. FinSight automatically categorizes your spending and lets you query your finances in plain English.
             </p>
 
-            <div className="stage-hero-actions">
-              <button
-                type="button"
-                className="btn-primary-luxury"
-                onClick={triggerGetStarted}
-                data-cursor="DEPLOY"
-              >
-                <span>Deploy Free Enclave</span>
+            <div className="hero-actions">
+              <button type="button" className="btn-primary-large" onClick={onGetStarted}>
+                <span>Get Started Free</span>
                 <ArrowUpRight size={15} />
               </button>
-              <a href="#bento" className="btn-m-gold" data-cursor="EXPLORE">
-                <span>Explore Matrix</span>
-                <ArrowUpRight size={13} />
+              <a href="#features" className="btn-secondary-large">
+                <span>How It Works</span>
               </a>
             </div>
 
-            {/* Monumental 3D Floating Interactive Centerpiece */}
-            <div className="stage-monolith-container">
-              <div className="stage-ambient-light" />
-              <DashboardFloatingPreview />
-            </div>
+            {/* Interactive Live App Preview Window (Real Personal Finance Niche) */}
+            <div className="hero-app-window">
+              <div className="window-topbar">
+                <div className="window-dots">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div className="window-search-pill">
+                  <Search size={12} />
+                  <span>Ask FinSight anything about your spending...</span>
+                </div>
+                <div style={{ width: 40 }} />
+              </div>
 
-            {/* Scroll Indicator */}
-            <div className="hero-scroll-indicator">
-              <a href="#bento" className="scroll-arrow-link" data-cursor="SCROLL">
-                <span>SCROLL</span>
-                <span className="down-arrow">↓</span>
-              </a>
+              <div className="window-content">
+                {/* Left: Real Personal Finance Snapshot */}
+                <div>
+                  <div className="window-metrics-row">
+                    <div className="mini-stat-card">
+                      <span className="stat-label">Total Net Balance</span>
+                      <div className="stat-val">$148,250.00</div>
+                      <div className="stat-sub">+3.2% this month</div>
+                    </div>
+                    <div className="mini-stat-card">
+                      <span className="stat-label">Monthly Spending</span>
+                      <div className="stat-val">$3,842.10</div>
+                      <div className="stat-sub" style={{ color: "var(--text-secondary)" }}>Within target budget</div>
+                    </div>
+                  </div>
+
+                  <div className="mini-list-title">Recent Activity</div>
+                  <div className="mini-tx-item">
+                    <div>
+                      <span className="mini-tx-merchant">Trader Joe's</span>
+                      <span className="mini-tx-cat">Groceries</span>
+                    </div>
+                    <span className="mini-tx-amount">-$74.20</span>
+                  </div>
+                  <div className="mini-tx-item">
+                    <div>
+                      <span className="mini-tx-merchant">Delta Air Lines</span>
+                      <span className="mini-tx-cat">Travel</span>
+                    </div>
+                    <span className="mini-tx-amount">-$380.00</span>
+                  </div>
+                  <div className="mini-tx-item">
+                    <div>
+                      <span className="mini-tx-merchant">Blue Bottle Coffee</span>
+                      <span className="mini-tx-cat">Dining</span>
+                    </div>
+                    <span className="mini-tx-amount">-$6.50</span>
+                  </div>
+                  <div className="mini-tx-item">
+                    <div>
+                      <span className="mini-tx-merchant">Payroll Deposit</span>
+                      <span className="mini-tx-cat" style={{ color: "#22c55e" }}>Income</span>
+                    </div>
+                    <span className="mini-tx-amount" style={{ color: "#22c55e" }}>+$4,850.00</span>
+                  </div>
+                </div>
+
+                {/* Right: AI Natural Language Query Card */}
+                <div className="window-ai-panel">
+                  <div>
+                    <div className="ai-query-input-box">
+                      <MessageSquare size={14} color="#3b82f6" />
+                      <span className="ai-query-text">"How much did I spend on dining out last month?"</span>
+                    </div>
+
+                    <div className="ai-answer-card">
+                      <p>
+                        You spent <strong>$542.80</strong> across 11 dining transactions in February. That is <strong>12% lower</strong> than January.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="ai-meta-tag">
+                    <Sparkles size={12} color="#3b82f6" />
+                    <span>Instant AI response backed by verified SQL</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
-          {/* ==================== KINETIC MARQUEE RIBBON ==================== */}
-          <div className="kinetic-marquee-section" aria-hidden="true">
-            <div className="kinetic-marquee-track">
-              <span className="marquee-phrase">
-                <span>AUTONOMOUS WEALTH</span>
-                <span className="marquee-dot" />
-                <span>ZERO <em>SPREADSHEETS</em></span>
-                <span className="marquee-dot" />
-                <span>DETERMINISTIC INTELLIGENCE</span>
-                <span className="marquee-dot" />
-                <span>VERIFIED <em>SQL AST</em></span>
-                <span className="marquee-dot" />
-                <span>SUB-MS <em>RECONCILIATION</em></span>
-                <span className="marquee-dot" />
-              </span>
-              <span className="marquee-phrase">
-                <span>AUTONOMOUS WEALTH</span>
-                <span className="marquee-dot" />
-                <span>ZERO <em>SPREADSHEETS</em></span>
-                <span className="marquee-dot" />
-                <span>DETERMINISTIC INTELLIGENCE</span>
-                <span className="marquee-dot" />
-                <span>VERIFIED <em>SQL AST</em></span>
-                <span className="marquee-dot" />
-                <span>SUB-MS <em>RECONCILIATION</em></span>
-                <span className="marquee-dot" />
-              </span>
+          {/* 3 Clear, Minimal Feature Cards */}
+          <section id="features" className="minimal-features-section">
+            <div className="section-label">Features</div>
+            <h2 className="section-title">Everything you need to stay on top of your finances.</h2>
+
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon-box">
+                  <UploadCloud size={20} />
+                </div>
+                <h3>Drop Any Bank CSV</h3>
+                <p>
+                  Export statements from Chase, Amex, Apple Card, or your local bank. FinSight automatically cleans the data and skips duplicate rows.
+                </p>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon-box">
+                  <MessageSquare size={20} />
+                </div>
+                <h3>Ask Questions in English</h3>
+                <p>
+                  Skip complicated spreadsheets. Ask natural questions like <em>"What were my biggest expenses last week?"</em> and get answers immediately.
+                </p>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon-box">
+                  <CheckCircle2 size={20} />
+                </div>
+                <h3>Smart Auto-Categorization</h3>
+                <p>
+                  Our hybrid classification engine maps messy bank codes like <code>SQ *COFFEE ROASTERS</code> to clean, recognizable categories with 99.8% accuracy.
+                </p>
+              </div>
             </div>
-          </div>
-
-          {/* ==================== SECTION 01: 3D INTERACTIVE BENTO MATRIX ==================== */}
-          <section id="bento" className="m-section">
-            <div className="m-section-header">
-              <span className="m-section-tag">01 // THE BENTO MATRIX</span>
-              <h2 className="m-section-title">
-                Engineered for <em>Total Autonomy</em>
-              </h2>
-              <p className="m-section-desc">
-                Six integrated telemetry engines designed to eradicate spreadsheet chaos, classify transactions deterministically, and query your wealth in plain conversational English.
-              </p>
-            </div>
-
-            <InteractiveBentoGrid onGetStarted={triggerGetStarted} />
-          </section>
-
-          {/* ==================== SECTION 02: ARCHITECTURAL SUBSYSTEMS ==================== */}
-          <section id="subsystems" className="m-section">
-            <div className="m-section-header">
-              <span className="m-section-tag">02 // ARCHITECTURAL SUBSYSTEMS</span>
-              <h2 className="m-section-title">
-                Hardware Grade <em>Assurance</em>
-              </h2>
-              <p className="m-section-desc">
-                Explore the foundational layers powering FinSight's sub-millisecond execution engine.
-              </p>
-            </div>
-
-            <MoraliaMovingGallery />
           </section>
         </main>
 
-        {/* ==================== EDITORIAL LUXURY FOOTER ==================== */}
-        <footer className="m-footer">
-          <div className="m-footer-top">
-            <div className="m-footer-brand">
-              <span>Fin<em>Sight</em></span>
-            </div>
-            <div className="m-footer-links">
-              <span>PostgreSQL 16</span>
-              <span>FastAPI</span>
-              <span>Claude 3.5 Sonnet</span>
-              <span>Recharts 2.15</span>
-            </div>
-          </div>
-          <div className="m-footer-bottom">
-            <span>© 2026 FinSight Intelligence. Multi-tenant cryptographic isolation.</span>
-            <span>Deterministic Hybrid Engine · 74 Tests Passing</span>
-          </div>
+        {/* Minimal Footer */}
+        <footer className="minimal-footer">
+          <div>FinSight · Personal Finance AI Tracker</div>
+          <div>Private, deterministic, and built for simplicity.</div>
         </footer>
       </div>
     </div>
