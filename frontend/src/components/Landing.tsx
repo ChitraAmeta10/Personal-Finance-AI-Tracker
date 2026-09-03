@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { ArrowUpRight, CheckCircle2, MessageSquare, Search, Sparkles, UploadCloud } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowRight, ArrowUpRight, Check, CheckCircle2, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
@@ -10,7 +10,21 @@ interface Props {
 }
 
 export function Landing({ onGetStarted, onSignIn }: Props) {
-  // Smooth scroll
+  // Live local time (Purpose Talent signature detail)
+  const [currentTime, setCurrentTime] = useState("");
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      );
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Smooth Lenis Scroll
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.1,
@@ -31,184 +45,313 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     };
   }, []);
 
+  // Interactive Statement Transformer sample
+  const [activeSample, setActiveSample] = useState<"coffee" | "airline" | "software">("coffee");
+
+  const SAMPLES = {
+    coffee: {
+      raw: "2026-03-01,POS DEBIT SQ *BLUE BOTTLE COFFEE #104 SAN FRANCISCO CA,-$6.50",
+      cleanMerchant: "Blue Bottle Coffee",
+      category: "Dining & Coffee",
+      amount: "-$6.50",
+      account: "Chase Sapphire ···4892",
+      confidence: "99.8% match",
+    },
+    airline: {
+      raw: "2026-02-28,DELTA AIR 0062819201824 ATLANTA GA TKT,-$382.40",
+      cleanMerchant: "Delta Air Lines",
+      category: "Travel & Flights",
+      amount: "-$382.40",
+      account: "Amex Platinum ···1004",
+      confidence: "99.9% match",
+    },
+    software: {
+      raw: "2026-02-26,GITHUB INC SPONSORS/SUB SAN FRANCISCO CA,-$21.00",
+      cleanMerchant: "GitHub Developer",
+      category: "Software & Subscriptions",
+      amount: "-$21.00",
+      account: "Apple Card ···7721",
+      confidence: "100% match",
+    },
+  };
+
+  const currentSample = SAMPLES[activeSample];
+
   return (
-    <div className="minimal-landing">
-      <div className="minimal-bg-glow" />
+    <div className="pt-layout">
+      {/* Paper Grain Noise Texture */}
+      <div className="pt-noise" />
 
-      <div className="minimal-container">
-        {/* Navigation */}
-        <header className="minimal-header">
-          <a href="#" className="minimal-brand">
-            <span>FinSight</span>
-            <span className="minimal-brand-badge">AI</span>
-          </a>
+      {/* ==================== FLOATING PILL NAV (Purpose Talent Style) ==================== */}
+      <div className="pt-nav-wrapper">
+        <header className="pt-nav-bar">
+          <div className="pt-nav-left">
+            <a href="#" className="pt-logo">
+              <span>FinSight</span>
+              <span className="pt-logo-dot" />
+            </a>
 
-          <div className="minimal-header-actions">
-            <button type="button" className="btn-ghost" onClick={onSignIn}>
+            <nav className="pt-nav-links" aria-label="Main Navigation">
+              <a href="#how-it-works" className="pt-nav-pill-btn">
+                <span className="ico-box">💳</span>
+                <span>Statements</span>
+              </a>
+              <a href="#ask-ai" className="pt-nav-pill-btn">
+                <span className="ico-box">✨</span>
+                <span>Ask AI</span>
+              </a>
+              <a href="#cards" className="pt-nav-pill-btn">
+                <span className="ico-box">📈</span>
+                <span>Features</span>
+              </a>
+            </nav>
+          </div>
+
+          <div className="pt-nav-right">
+            <div className="pt-live-time">
+              <span className="live-dot" />
+              <span>{currentTime ? `Live · ${currentTime}` : "Live Sync"}</span>
+            </div>
+
+            <button type="button" className="pt-btn-signin" onClick={onSignIn}>
               Sign In
             </button>
-            <button type="button" className="btn-solid" onClick={onGetStarted}>
+
+            <button type="button" className="pt-btn-cta" onClick={onGetStarted}>
               <span>Get Started</span>
               <ArrowUpRight size={13} />
             </button>
           </div>
         </header>
+      </div>
 
-        {/* Hero */}
+      <div className="pt-container">
+        {/* ==================== HERO SECTION ==================== */}
         <main>
-          <section className="minimal-hero">
-            <div className="hero-pill">
-              <span className="hero-pill-dot" />
-              <span>Personal Finance AI Tracker</span>
-            </div>
-
-            <h1 className="hero-title">
-              See your money clearly.
-            </h1>
-
-            <p className="hero-subtitle">
-              Drop your bank statements. FinSight automatically categorizes your spending and lets you query your finances in plain English.
-            </p>
-
-            <div className="hero-actions">
-              <button type="button" className="btn-primary-large" onClick={onGetStarted}>
-                <span>Get Started Free</span>
-                <ArrowUpRight size={15} />
-              </button>
-              <a href="#features" className="btn-secondary-large">
-                <span>How It Works</span>
-              </a>
-            </div>
-
-            {/* Interactive Live App Preview Window (Real Personal Finance Niche) */}
-            <div className="hero-app-window">
-              <div className="window-topbar">
-                <div className="window-dots">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div className="window-search-pill">
-                  <Search size={12} />
-                  <span>Ask FinSight anything about your spending...</span>
-                </div>
-                <div style={{ width: 40 }} />
+          <section className="pt-hero">
+            <div className="pt-hero-headline-wrap">
+              <div className="pt-hero-tag">
+                <span>Personal Finance AI Tracker</span>
               </div>
 
-              <div className="window-content">
-                {/* Left: Real Personal Finance Snapshot */}
-                <div>
-                  <div className="window-metrics-row">
-                    <div className="mini-stat-card">
-                      <span className="stat-label">Total Net Balance</span>
-                      <div className="stat-val">$148,250.00</div>
-                      <div className="stat-sub">+3.2% this month</div>
-                    </div>
-                    <div className="mini-stat-card">
-                      <span className="stat-label">Monthly Spending</span>
-                      <div className="stat-val">$3,842.10</div>
-                      <div className="stat-sub" style={{ color: "var(--text-secondary)" }}>Within target budget</div>
-                    </div>
-                  </div>
+              <h1 className="pt-hero-title">
+                Your money,<br />
+                <span className="highlight-yellow">understood.</span>
+              </h1>
 
-                  <div className="mini-list-title">Recent Activity</div>
-                  <div className="mini-tx-item">
-                    <div>
-                      <span className="mini-tx-merchant">Trader Joe's</span>
-                      <span className="mini-tx-cat">Groceries</span>
-                    </div>
-                    <span className="mini-tx-amount">-$74.20</span>
-                  </div>
-                  <div className="mini-tx-item">
-                    <div>
-                      <span className="mini-tx-merchant">Delta Air Lines</span>
-                      <span className="mini-tx-cat">Travel</span>
-                    </div>
-                    <span className="mini-tx-amount">-$380.00</span>
-                  </div>
-                  <div className="mini-tx-item">
-                    <div>
-                      <span className="mini-tx-merchant">Blue Bottle Coffee</span>
-                      <span className="mini-tx-cat">Dining</span>
-                    </div>
-                    <span className="mini-tx-amount">-$6.50</span>
-                  </div>
-                  <div className="mini-tx-item">
-                    <div>
-                      <span className="mini-tx-merchant">Payroll Deposit</span>
-                      <span className="mini-tx-cat" style={{ color: "#22c55e" }}>Income</span>
-                    </div>
-                    <span className="mini-tx-amount" style={{ color: "#22c55e" }}>+$4,850.00</span>
-                  </div>
+              <p className="pt-hero-subtitle">
+                Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
+              </p>
+
+              <div className="pt-hero-actions">
+                <button
+                  type="button"
+                  className="pt-btn-hero-main"
+                  onClick={onGetStarted}
+                >
+                  <span>Get Started Free</span>
+                  <ArrowRight size={15} />
+                </button>
+                <a href="#how-it-works" className="pt-btn-hero-secondary">
+                  <span>See How It Works</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Interactive Statement Transformer Card (Centerpiece) */}
+            <div id="how-it-works" className="pt-transformer-card">
+              <div className="transformer-header">
+                <span className="transformer-label">Interactive Statement Transformer</span>
+                <div className="statement-tabs-row">
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "coffee" ? "active" : ""}`}
+                    onClick={() => setActiveSample("coffee")}
+                  >
+                    Coffee Purchase
+                  </button>
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "airline" ? "active" : ""}`}
+                    onClick={() => setActiveSample("airline")}
+                  >
+                    Flight Ticket
+                  </button>
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "software" ? "active" : ""}`}
+                    onClick={() => setActiveSample("software")}
+                  >
+                    SaaS Subscription
+                  </button>
+                </div>
+              </div>
+
+              <div className="transformer-grid">
+                {/* Raw Bank Text */}
+                <div className="raw-statement-box">
+                  <div className="raw-header">Messy Bank Export</div>
+                  <div className="raw-text">{currentSample.raw}</div>
                 </div>
 
-                {/* Right: AI Natural Language Query Card */}
-                <div className="window-ai-panel">
-                  <div>
-                    <div className="ai-query-input-box">
-                      <MessageSquare size={14} color="#3b82f6" />
-                      <span className="ai-query-text">"How much did I spend on dining out last month?"</span>
-                    </div>
+                {/* Transformation Arrow */}
+                <div className="transformer-arrow">→</div>
 
-                    <div className="ai-answer-card">
-                      <p>
-                        You spent <strong>$542.80</strong> across 11 dining transactions in February. That is <strong>12% lower</strong> than January.
-                      </p>
-                    </div>
+                {/* Cleaned FinSight Card */}
+                <div className="cleaned-card-box">
+                  <div className="cleaned-header">
+                    <span className="cleaned-cat-badge">
+                      <Sparkles size={12} />
+                      <span>{currentSample.category}</span>
+                    </span>
+                    <span className="cleaned-amount">{currentSample.amount}</span>
                   </div>
-
-                  <div className="ai-meta-tag">
-                    <Sparkles size={12} color="#3b82f6" />
-                    <span>Instant AI response backed by verified SQL</span>
+                  <div className="cleaned-merchant">{currentSample.cleanMerchant}</div>
+                  <div className="cleaned-meta">
+                    {currentSample.account} · {currentSample.confidence}
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* 3 Clear, Minimal Feature Cards */}
-          <section id="features" className="minimal-features-section">
-            <div className="section-label">Features</div>
-            <h2 className="section-title">Everything you need to stay on top of your finances.</h2>
+          {/* ==================== STICKY STACKING CARDS (Purpose Talent Signature) ==================== */}
+          <section id="cards" className="pt-stack-section">
+            <div className="pt-stack-intro">
+              <div className="stack-eyebrow">Everything In One Place</div>
+              <h2 className="stack-title">How FinSight organizes your life.</h2>
+            </div>
 
-            <div className="features-grid">
-              <div className="feature-card">
-                <div className="feature-icon-box">
-                  <UploadCloud size={20} />
+            <div className="pt-cards-stack-container">
+              {/* Card 01: Yellow */}
+              <div className="pt-sticky-card card-yellow">
+                <div>
+                  <div className="card-num">01 / Ingestion</div>
+                  <h3 className="card-heading">Drop Any Bank CSV</h3>
+                  <p className="card-desc">
+                    Chase, Amex, Apple Card, or local credit unions. Drop any statement format — FinSight automatically deduplicates and normalizes every row in seconds.
+                  </p>
                 </div>
-                <h3>Drop Any Bank CSV</h3>
-                <p>
-                  Export statements from Chase, Amex, Apple Card, or your local bank. FinSight automatically cleans the data and skips duplicate rows.
-                </p>
+                <div className="card-visual-slot">
+                  <div className="visual-chip-row">
+                    <span className="mini-badge">
+                      <UploadCloud size={13} />
+                      <span>CSV / PDF / QFX</span>
+                    </span>
+                    <span className="mini-badge">
+                      <Check size={13} />
+                      <span>Zero Duplicates</span>
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--pt-ink)", fontWeight: 600 }}>
+                    Instant Statement Reconciliation
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--pt-ink-subtle)", marginTop: 4 }}>
+                    Automated SHA-256 fingerprinting ensures duplicate charges are discarded in zero runtime cycles.
+                  </div>
+                </div>
               </div>
 
-              <div className="feature-card">
-                <div className="feature-icon-box">
-                  <MessageSquare size={20} />
+              {/* Card 02: Purple */}
+              <div id="ask-ai" className="pt-sticky-card card-purple">
+                <div>
+                  <div className="card-num">02 / AI Intelligence</div>
+                  <h3 className="card-heading">Ask in Plain English</h3>
+                  <p className="card-desc">
+                    No formulas, no pivot tables. Ask natural questions like <em>"How much did I spend on dining out last month?"</em> and get clear, verified answers backed by math.
+                  </p>
                 </div>
-                <h3>Ask Questions in English</h3>
-                <p>
-                  Skip complicated spreadsheets. Ask natural questions like <em>"What were my biggest expenses last week?"</em> and get answers immediately.
-                </p>
+                <div className="card-visual-slot">
+                  <div className="visual-mock-query">
+                    💬 "What were my top 3 expenses in February?"
+                  </div>
+                  <div className="visual-mock-answer">
+                    1. Rent & Housing ($2,400)<br />
+                    2. Flight to Austin ($382)<br />
+                    3. Whole Foods Groceries ($184)
+                  </div>
+                </div>
               </div>
 
-              <div className="feature-card">
-                <div className="feature-icon-box">
-                  <CheckCircle2 size={20} />
+              {/* Card 03: Coral */}
+              <div className="pt-sticky-card card-coral">
+                <div>
+                  <div className="card-num">03 / Wealth Protection</div>
+                  <h3 className="card-heading">Catch Recurring Leaks</h3>
+                  <p className="card-desc">
+                    Automatically spots forgotten $14.99 SaaS trials, duplicate streaming charges, and price creep before they quietly drain your savings.
+                  </p>
                 </div>
-                <h3>Smart Auto-Categorization</h3>
-                <p>
-                  Our hybrid classification engine maps messy bank codes like <code>SQ *COFFEE ROASTERS</code> to clean, recognizable categories with 99.8% accuracy.
-                </p>
+                <div className="card-visual-slot">
+                  <div className="visual-chip-row">
+                    <span className="mini-badge" style={{ background: "#FEE2E2", color: "#991B1B" }}>
+                      ⚠️ Price Increase
+                    </span>
+                    <span className="mini-badge">Streaming +$3/mo</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--pt-ink)", fontWeight: 600 }}>
+                    Monthly Waste Eliminator
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--pt-ink-subtle)", marginTop: 4 }}>
+                    Identified $64/month in unused subscriptions ready for cancellation.
+                  </div>
+                </div>
               </div>
+
+              {/* Card 04: Dark */}
+              <div className="pt-sticky-card card-dark">
+                <div>
+                  <div className="card-num">04 / Privacy & Security</div>
+                  <h3 className="card-heading" style={{ color: "#FFFFFF" }}>100% Private Enclave</h3>
+                  <p className="card-desc">
+                    Your financial data belongs exclusively to you. No tracking, no selling your bank data to credit card brokers, zero third-party ads.
+                  </p>
+                </div>
+                <div className="card-visual-slot">
+                  <div className="visual-chip-row">
+                    <span className="mini-badge">
+                      <ShieldCheck size={13} color="#22C55E" />
+                      <span>AES-256 Encryption</span>
+                    </span>
+                    <span className="mini-badge">
+                      <CheckCircle2 size={13} color="#22C55E" />
+                      <span>Tenant Isolated</span>
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>
+                    Deterministic SQL Security
+                  </div>
+                  <div style={{ fontSize: 12, color: "#A1A1AA", marginTop: 4 }}>
+                    Strict SELECT-only execution guardrails scoped to your personal user account.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ==================== BOTTOM CTA ==================== */}
+          <section className="pt-cta-section">
+            <div className="pt-cta-box">
+              <h2 className="pt-cta-title">Ready to see your money clearly?</h2>
+              <p className="pt-cta-sub">
+                Join users who took control of their spending with FinSight. No credit card required to get started.
+              </p>
+              <button
+                type="button"
+                className="pt-btn-hero-main"
+                onClick={onGetStarted}
+              >
+                <span>Get Started Free</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
           </section>
         </main>
 
-        {/* Minimal Footer */}
-        <footer className="minimal-footer">
+        {/* ==================== FOOTER ==================== */}
+        <footer className="pt-footer">
           <div>FinSight · Personal Finance AI Tracker</div>
-          <div>Private, deterministic, and built for simplicity.</div>
+          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Private & Deterministic</div>
         </footer>
       </div>
     </div>
