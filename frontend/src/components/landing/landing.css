@@ -59,6 +59,24 @@ body, html {
   mix-blend-mode: multiply;
 }
 
+/* Advanced Minimal Scroll Progress Bar */
+.pt-scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #1E1E1E;
+  transform-origin: 0%;
+  z-index: 9999;
+}
+
+.pt-transformer-card-perspective-wrapper {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  width: 100%;
+}
+
 .pt-layout {
   position: relative;
   min-height: 100vh;

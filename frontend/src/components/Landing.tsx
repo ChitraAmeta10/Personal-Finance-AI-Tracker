@@ -1,5 +1,14 @@
-import { useState, useEffect } from "react";
-import { ArrowRight, ArrowUpRight, Check, CheckCircle2, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  CheckCircle2,
+  ShieldCheck,
+  Sparkles,
+  UploadCloud,
+} from "lucide-react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
@@ -10,7 +19,7 @@ interface Props {
 }
 
 export function Landing({ onGetStarted, onSignIn }: Props) {
-  // Live local time (Purpose Talent signature detail)
+  // Live local time
   const [currentTime, setCurrentTime] = useState("");
   useEffect(() => {
     const update = () => {
@@ -27,7 +36,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
   // Smooth Lenis Scroll
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
@@ -44,6 +53,29 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       lenis.destroy();
     };
   }, []);
+
+  // Advanced Framer Motion Scroll Progress & 3D Spatial Transforms
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  // Hero 3D Spatial recession on scroll
+  const heroScale = useTransform(smoothProgress, [0, 1], [1, 0.9]);
+  const heroRotateX = useTransform(smoothProgress, [0, 1], [0, 14]);
+  const heroTranslateY = useTransform(smoothProgress, [0, 1], [0, 50]);
+  const heroOpacity = useTransform(smoothProgress, [0, 0.85, 1], [1, 0.95, 0.6]);
+
+  // Overall page scroll progress
+  const { scrollYProgress: pageScroll } = useScroll();
+  const scaleX = useSpring(pageScroll, { stiffness: 100, damping: 30 });
 
   // Interactive Statement Transformer sample
   const [activeSample, setActiveSample] = useState<"coffee" | "airline" | "software">("coffee");
@@ -82,7 +114,13 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       {/* Paper Grain Noise Texture */}
       <div className="pt-noise" />
 
-      {/* ==================== FLOATING PILL NAV (Purpose Talent Style) ==================== */}
+      {/* Advanced Minimal Scroll Progress Bar */}
+      <motion.div
+        className="pt-scroll-progress-bar"
+        style={{ scaleX }}
+      />
+
+      {/* ==================== FLOATING PILL NAV ==================== */}
       <div className="pt-nav-wrapper">
         <header className="pt-nav-bar">
           <div className="pt-nav-left">
@@ -126,9 +164,9 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       </div>
 
       <div className="pt-container">
-        {/* ==================== HERO SECTION ==================== */}
+        {/* ==================== HERO SECTION WITH 3D SPATIAL SCROLL ==================== */}
         <main>
-          <section className="pt-hero">
+          <section ref={heroRef} className="pt-hero">
             <div className="pt-hero-headline-wrap">
               <div className="pt-hero-tag">
                 <span>Personal Finance AI Tracker</span>
@@ -158,64 +196,76 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               </div>
             </div>
 
-            {/* Interactive Statement Transformer Card (Centerpiece) */}
-            <div id="how-it-works" className="pt-transformer-card">
-              <div className="transformer-header">
-                <span className="transformer-label">Interactive Statement Transformer</span>
-                <div className="statement-tabs-row">
-                  <button
-                    type="button"
-                    className={`stm-tab ${activeSample === "coffee" ? "active" : ""}`}
-                    onClick={() => setActiveSample("coffee")}
-                  >
-                    Coffee Purchase
-                  </button>
-                  <button
-                    type="button"
-                    className={`stm-tab ${activeSample === "airline" ? "active" : ""}`}
-                    onClick={() => setActiveSample("airline")}
-                  >
-                    Flight Ticket
-                  </button>
-                  <button
-                    type="button"
-                    className={`stm-tab ${activeSample === "software" ? "active" : ""}`}
-                    onClick={() => setActiveSample("software")}
-                  >
-                    SaaS Subscription
-                  </button>
-                </div>
-              </div>
-
-              <div className="transformer-grid">
-                {/* Raw Bank Text */}
-                <div className="raw-statement-box">
-                  <div className="raw-header">Messy Bank Export</div>
-                  <div className="raw-text">{currentSample.raw}</div>
-                </div>
-
-                {/* Transformation Arrow */}
-                <div className="transformer-arrow">→</div>
-
-                {/* Cleaned FinSight Card */}
-                <div className="cleaned-card-box">
-                  <div className="cleaned-header">
-                    <span className="cleaned-cat-badge">
-                      <Sparkles size={12} />
-                      <span>{currentSample.category}</span>
-                    </span>
-                    <span className="cleaned-amount">{currentSample.amount}</span>
-                  </div>
-                  <div className="cleaned-merchant">{currentSample.cleanMerchant}</div>
-                  <div className="cleaned-meta">
-                    {currentSample.account} · {currentSample.confidence}
+            {/* Advanced 3D Spatial Scroll Card (Tilts and scales backward in 3D as you scroll) */}
+            <motion.div
+              id="how-it-works"
+              className="pt-transformer-card-perspective-wrapper"
+              style={{
+                scale: heroScale,
+                rotateX: heroRotateX,
+                y: heroTranslateY,
+                opacity: heroOpacity,
+                transformPerspective: 1200,
+              }}
+            >
+              <div className="pt-transformer-card">
+                <div className="transformer-header">
+                  <span className="transformer-label">Interactive Statement Transformer</span>
+                  <div className="statement-tabs-row">
+                    <button
+                      type="button"
+                      className={`stm-tab ${activeSample === "coffee" ? "active" : ""}`}
+                      onClick={() => setActiveSample("coffee")}
+                    >
+                      Coffee Purchase
+                    </button>
+                    <button
+                      type="button"
+                      className={`stm-tab ${activeSample === "airline" ? "active" : ""}`}
+                      onClick={() => setActiveSample("airline")}
+                    >
+                      Flight Ticket
+                    </button>
+                    <button
+                      type="button"
+                      className={`stm-tab ${activeSample === "software" ? "active" : ""}`}
+                      onClick={() => setActiveSample("software")}
+                    >
+                      SaaS Subscription
+                    </button>
                   </div>
                 </div>
+
+                <div className="transformer-grid">
+                  {/* Raw Bank Text */}
+                  <div className="raw-statement-box">
+                    <div className="raw-header">Messy Bank Export</div>
+                    <div className="raw-text">{currentSample.raw}</div>
+                  </div>
+
+                  {/* Transformation Arrow */}
+                  <div className="transformer-arrow">→</div>
+
+                  {/* Cleaned FinSight Card */}
+                  <div className="cleaned-card-box">
+                    <div className="cleaned-header">
+                      <span className="cleaned-cat-badge">
+                        <Sparkles size={12} />
+                        <span>{currentSample.category}</span>
+                      </span>
+                      <span className="cleaned-amount">{currentSample.amount}</span>
+                    </div>
+                    <div className="cleaned-merchant">{currentSample.cleanMerchant}</div>
+                    <div className="cleaned-meta">
+                      {currentSample.account} · {currentSample.confidence}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </section>
 
-          {/* ==================== STICKY STACKING CARDS (Purpose Talent Signature) ==================== */}
+          {/* ==================== STICKY STACKING CARDS WITH PARALLAX TILT ==================== */}
           <section id="cards" className="pt-stack-section">
             <div className="pt-stack-intro">
               <div className="stack-eyebrow">Everything In One Place</div>
@@ -223,8 +273,13 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
 
             <div className="pt-cards-stack-container">
-              {/* Card 01: Yellow */}
-              <div className="pt-sticky-card card-yellow">
+              {/* Card 01: Yellow (with -1.5deg natural card stack tilt) */}
+              <motion.div
+                className="pt-sticky-card card-yellow"
+                style={{ rotate: -1.5 }}
+                whileHover={{ scale: 1.01, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
                 <div>
                   <div className="card-num">01 / Ingestion</div>
                   <h3 className="card-heading">Drop Any Bank CSV</h3>
@@ -250,10 +305,16 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                     Automated SHA-256 fingerprinting ensures duplicate charges are discarded in zero runtime cycles.
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 02: Purple */}
-              <div id="ask-ai" className="pt-sticky-card card-purple">
+              {/* Card 02: Purple (with +1.2deg natural card stack tilt) */}
+              <motion.div
+                id="ask-ai"
+                className="pt-sticky-card card-purple"
+                style={{ rotate: 1.2 }}
+                whileHover={{ scale: 1.01, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
                 <div>
                   <div className="card-num">02 / AI Intelligence</div>
                   <h3 className="card-heading">Ask in Plain English</h3>
@@ -271,10 +332,15 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                     3. Whole Foods Groceries ($184)
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 03: Coral */}
-              <div className="pt-sticky-card card-coral">
+              {/* Card 03: Coral (with -0.8deg natural card stack tilt) */}
+              <motion.div
+                className="pt-sticky-card card-coral"
+                style={{ rotate: -0.8 }}
+                whileHover={{ scale: 1.01, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
                 <div>
                   <div className="card-num">03 / Wealth Protection</div>
                   <h3 className="card-heading">Catch Recurring Leaks</h3>
@@ -296,10 +362,15 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                     Identified $64/month in unused subscriptions ready for cancellation.
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 04: Dark */}
-              <div className="pt-sticky-card card-dark">
+              {/* Card 04: Dark (with 0deg anchor card stack tilt) */}
+              <motion.div
+                className="pt-sticky-card card-dark"
+                style={{ rotate: 0 }}
+                whileHover={{ scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
                 <div>
                   <div className="card-num">04 / Privacy & Security</div>
                   <h3 className="card-heading" style={{ color: "#FFFFFF" }}>100% Private Enclave</h3>
@@ -325,7 +396,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                     Strict SELECT-only execution guardrails scoped to your personal user account.
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </section>
 
