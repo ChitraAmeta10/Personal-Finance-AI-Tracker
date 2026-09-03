@@ -12,12 +12,12 @@ export function ThreeFinanceCanvas() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      45,
+      60,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-    camera.position.z = 45;
+    camera.position.z = 50;
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -28,39 +28,53 @@ export function ThreeFinanceCanvas() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Warm, poetic, champagne-amber micro-particle ambiance (Rose Family style)
-    const count = 280;
+    // Dynamic 3D cybernetic wave field (Vibe-coded 2026 Gen-Z Fintech)
+    const count = 750;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+
+    const cyan = new THREE.Color("#00F2FE");
+    const violet = new THREE.Color("#8B5CF6");
+    const white = new THREE.Color("#FFFFFF");
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 90;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 65;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 45;
+      positions[i * 3] = (Math.random() - 0.5) * 110;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 75;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 55;
+
+      const mixRatio = Math.random();
+      const col = mixRatio < 0.45 ? cyan : mixRatio < 0.85 ? violet : white;
+      colors[i * 3] = col.r;
+      colors[i * 3 + 1] = col.g;
+      colors[i * 3 + 2] = col.b;
     }
 
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-    // Soft champagne radial glow canvas texture
+    // High-definition glowing particle canvas sprite
     const canvas = document.createElement("canvas");
-    canvas.width = 32;
-    canvas.height = 32;
+    canvas.width = 64;
+    canvas.height = 64;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-      grad.addColorStop(0, "rgba(245, 239, 230, 0.85)");
-      grad.addColorStop(0.4, "rgba(209, 189, 162, 0.3)");
+      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, "rgba(255, 255, 255, 1)");
+      grad.addColorStop(0.2, "rgba(0, 242, 254, 0.8)");
+      grad.addColorStop(0.5, "rgba(139, 92, 246, 0.35)");
       grad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 32, 32);
+      ctx.fillRect(0, 0, 64, 64);
     }
     const texture = new THREE.CanvasTexture(canvas);
 
     const material = new THREE.PointsMaterial({
-      size: 0.9,
+      size: 1.6,
       map: texture,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -99,12 +113,12 @@ export function ThreeFinanceCanvas() {
       animationFrameId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Gentle, calm breathing drift
-      mouseX += (targetX - mouseX) * 0.02;
-      mouseY += (targetY - mouseY) * 0.02;
+      // Smooth inertia mouse follow
+      mouseX += (targetX - mouseX) * 0.04;
+      mouseY += (targetY - mouseY) * 0.04;
 
-      points.rotation.y = elapsed * 0.012 + mouseX * 0.05;
-      points.rotation.x = elapsed * 0.008 - mouseY * 0.05;
+      points.rotation.y = elapsed * 0.035 + mouseX * 0.15;
+      points.rotation.x = elapsed * 0.02 - mouseY * 0.15;
 
       renderer.render(scene, camera);
     };

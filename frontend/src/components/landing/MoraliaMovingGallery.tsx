@@ -13,35 +13,35 @@ interface ShowcaseRow {
 const ROWS: ShowcaseRow[] = [
   {
     num: "01",
-    category: "CORE LEDGER & ANALYTICS",
-    title: "Autonomous Cashflow Engine",
-    desc: "PostgreSQL 16 & MongoDB 7 polyglot persistence. Real-time spend velocity, category donuts, and month-over-month trends on a colorblind-safe spectrum.",
-    image: "/images/dashboard-dark.png",
-    tags: ["RULES FIRST", "DEDUP HASH", "RECHARTS"],
+    category: "PHYSICAL ASSET ENCLAVE",
+    title: "Quantum Titanium Hardware",
+    desc: "Laser-etched aerospace titanium smart card coupled with tenant-isolated AES-256 enclaves and zero plain-text key exposure.",
+    image: "/images/hologram-card.jpg",
+    tags: ["TITANIUM FINISH", "AES-256", "ZERO-KNOWLEDGE"],
   },
   {
     num: "02",
-    category: "NEURAL ENGINE",
-    title: "Natural Language Text-to-SQL",
-    desc: "Ask complex financial questions in plain English. Verified through SQL AST parsers with zero prompt-injection vectors.",
+    category: "NEURAL ANALYTICS MATRIX",
+    title: "Global Spend Velocity Matrix",
+    desc: "Sub-millisecond spend velocity curves, recurring leak detectors, and 5-year wealth compounding models visualized in real time.",
+    image: "/images/hologram-tablet.jpg",
+    tags: ["SUB-MS LATENCY", "RECHARTS 2.15", "COMPOUNDING"],
+  },
+  {
+    num: "03",
+    category: "NATURAL LANGUAGE AST",
+    title: "Zero-Injection Text-to-SQL",
+    desc: "Ask complex questions in conversational English. Verified through SQL AST parsers strictly scoped to your tenant ID.",
     image: "/images/ask-ai.png",
     tags: ["SELECT ONLY", "AUDIT TRAIL", "CLAUDE 3.5"],
   },
   {
-    num: "03",
-    category: "PHYSICAL ARCHITECTURE",
-    title: "FinSight Black Platinum",
-    desc: "Matte black obsidian titanium smart card hardware paired with bank-grade JWT authentication and tenant isolation.",
-    image: "/images/card-titanium.jpg",
-    tags: ["TITANIUM FINISH", "AES-256", "ENCLAVE"],
-  },
-  {
     num: "04",
-    category: "EXECUTIVE TELEMETRY",
-    title: "Real-Time Yield & Leaks",
-    desc: "Automated SaaS subscription leak detection, tax-deductible expense sorting, and 5-year wealth compounding projections.",
-    image: "/images/dashboard-matrix.jpg",
-    tags: ["SUB-MS LATENCY", "LEAK DETECTOR", "COMPOUNDING"],
+    category: "POLYGLOT PERSISTENCE",
+    title: "Autonomous Ingestion Core",
+    desc: "Format-agnostic CSV parser with SHA-256 deduplication and hybrid rule-first deterministic classification.",
+    image: "/images/dashboard-dark.png",
+    tags: ["100% IDEMPOTENT", "POSTGRESQL 16", "74 UNIT TESTS"],
   },
 ];
 
@@ -63,8 +63,8 @@ export function MoraliaMovingGallery() {
     let animId: number;
     const loop = () => {
       setLerpPos((prev) => ({
-        x: prev.x + (mousePos.x - prev.x) * 0.08,
-        y: prev.y + (mousePos.y - prev.y) * 0.08,
+        x: prev.x + (mousePos.x - prev.x) * 0.1,
+        y: prev.y + (mousePos.y - prev.y) * 0.1,
       }));
       animId = requestAnimationFrame(loop);
     };
@@ -81,12 +81,12 @@ export function MoraliaMovingGallery() {
       onMouseMove={handleMouseMove}
       data-cursor="EXPLORE"
     >
-      {/* Floating Picture Card Following Cursor (Rose Family Style) */}
+      {/* 3D Floating Picture Card Following Cursor with Lerp Physics */}
       <div
         className={`rose-floating-preview ${activeIdx !== null ? "visible" : ""}`}
         style={{
-          transform: `translate3d(${lerpPos.x - 170}px, ${lerpPos.y - 120}px, 0) rotate(${
-            (lerpPos.x - mousePos.x) * -0.04
+          transform: `translate3d(${lerpPos.x - 190}px, ${lerpPos.y - 130}px, 0) rotate(${
+            (lerpPos.x - mousePos.x) * -0.06
           }deg)`,
         }}
       >
@@ -135,7 +135,7 @@ export function MoraliaMovingGallery() {
 
               <div className="rose-row-right">
                 <span className="rose-circle-arrow">
-                  <ArrowUpRight size={14} />
+                  <ArrowUpRight size={15} />
                 </span>
               </div>
             </div>

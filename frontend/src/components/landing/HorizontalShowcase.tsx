@@ -1,132 +1,135 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, ArrowUpRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, ShieldCheck, Sparkles, Terminal } from "lucide-react";
 
-interface FeatureSlide {
+interface SlideData {
   id: string;
-  num: string;
-  title: string;
   category: string;
-  desc: string;
+  title: string;
+  description: string;
   metric: string;
   metricLabel: string;
-  image: string;
   tags: string[];
+  image: string;
+  icon: JSX.Element;
 }
 
-const SLIDES: FeatureSlide[] = [
+const SLIDES: SlideData[] = [
   {
-    id: "hybrid",
-    num: "01",
-    category: "HYBRID CLASSIFIER",
-    title: "Dual-Engine Deterministic & LLM Pipeline",
-    desc: "Unambiguous merchants are processed in 0.01ms via regex keyword rules at zero API cost; only ambiguous strings route to Claude 3.5 in batched embeddings.",
-    metric: "99.8%",
-    metricLabel: "Categorization Accuracy",
-    image: "/images/dashboard-dark.png",
-    tags: ["RULES FIRST", "CLAUDE 3.5", "BATCHED EMBEDDINGS"],
+    id: "quantum-card",
+    category: "PHYSICAL ASSET ARCHITECTURE",
+    title: "Quantum Titanium Hardware Monolith",
+    description:
+      "Engineered from aerospace-grade black titanium with embedded cryptographic secure element. Zero plain-text key storage, biometric authorization, and real-time offline ledger balance attestation.",
+    metric: "AES-256",
+    metricLabel: "Hardware Security Module (HSM)",
+    tags: ["Laser Etched", "Tamper Resistant", "Zero-Knowledge"],
+    image: "/images/hologram-card.jpg",
+    icon: <ShieldCheck size={18} />,
   },
   {
-    id: "sql",
-    num: "02",
-    category: "NATURAL LANGUAGE AST",
-    title: "Verifiable Text-to-SQL Architecture",
-    desc: "Inquire about spending in everyday conversational English. Queries are parsed through sqlglot AST validators, rejected if mutating, and strictly bound to your tenant.",
-    metric: "< 14ms",
-    metricLabel: "Average Query Latency",
-    image: "/images/ask-ai.png",
-    tags: ["SELECT ONLY", "PARAMETERIZED", "FULL AUDIT TRAIL"],
+    id: "neural-analytics",
+    category: "QUANTITATIVE TELEMETRY",
+    title: "Neural Analytics Matrix & Spend Velocity",
+    description:
+      "Real-time liquidity curves, automated recurring leak discovery, and predictive wealth compounding simulations computed through Recharts 2.15 data visualization engines.",
+    metric: "< 0.8ms",
+    metricLabel: "AST Parser Execution Latency",
+    tags: ["Recharts 2.15", "Colorblind-Safe", "Predictive Yield"],
+    image: "/images/hologram-tablet.jpg",
+    icon: <Sparkles size={18} />,
   },
   {
-    id: "analytics",
-    num: "03",
-    category: "EXECUTIVE TELEMETRY",
-    title: "Executive Wealth & Cashflow Velocity",
-    desc: "Monitor month-over-month burn rate, discretionary capital, and category distributions on a scientifically validated, colorblind-safe spectrum.",
+    id: "text-to-sql",
+    category: "NATURAL LANGUAGE ENGINE",
+    title: "Zero-Injection SQL Synthesis Engine",
+    description:
+      "Transform freeform questions into verified read-only SQL queries via Claude 3.5 Sonnet. Every AST is validated, read-only restricted, and mathematically scoped to your encrypted tenant partition.",
     metric: "100%",
-    metricLabel: "Idempotent Dedup",
-    image: "/images/dashboard-matrix.jpg",
-    tags: ["RECHARTS", "COLORBLIND SAFE", "POSTGRESQL 16"],
+    metricLabel: "SELECT-Only Guardrail Enforcement",
+    tags: ["AST Parser", "Zero Prompt-Injection", "Claude 3.5"],
+    image: "/images/ask-ai.png",
+    icon: <Terminal size={18} />,
   },
   {
-    id: "hardware",
-    num: "04",
-    category: "SMART LEDGER",
-    title: "FinSight Black Platinum Architecture",
-    desc: "A seamless bridge between physical transactions and autonomous digital categorization, backed by bank-grade JWT authentication and MongoDB 7 AI telemetry.",
+    id: "ingestion-core",
+    category: "DETERMINISTIC PIPELINE",
+    title: "Format-Agnostic Statement Ingestion",
+    description:
+      "Streamlines messy bank exports from Chase, Amex, SVB, and Revolut. Automated SHA-256 idempotency hashing ensures duplicate charges are discarded in zero runtime cycles.",
     metric: "74 Tests",
-    metricLabel: "Pytest Suites Passing",
-    image: "/images/card-titanium.jpg",
-    tags: ["TITANIUM FINISH", "AES-256", "MONGODB TELEMETRY"],
+    metricLabel: "Automated Unit & Ingestion Tests Passing",
+    tags: ["100% Idempotent", "PostgreSQL 16", "Zero Hallucination"],
+    image: "/images/dashboard-dark.png",
+    icon: <CheckCircle2 size={18} />,
   },
 ];
 
 export function HorizontalShowcase() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? SLIDES.length - 1 : prev - 1));
+    setCurrentIdx((prev) => (prev === 0 ? SLIDES.length - 1 : prev - 1));
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === SLIDES.length - 1 ? 0 : prev + 1));
+    setCurrentIdx((prev) => (prev === SLIDES.length - 1 ? 0 : prev + 1));
   };
 
-  const current = SLIDES[currentIndex];
+  const current = SLIDES[currentIdx];
 
   return (
-    <div className="horizontal-showcase-wrapper" data-cursor="EXPLORE">
-      {/* Top Header & Navigation Controls */}
+    <div className="horizontal-showcase-wrapper" data-cursor="SLIDE">
+      {/* Top Controller Bar */}
       <div className="showcase-nav-bar">
         <div className="showcase-index-indicator">
-          <span className="current-num">[ {current.num} ]</span>
-          <span className="total-num">/ 04</span>
+          <span className="current-num">0{currentIdx + 1}</span>
+          <span className="total-num">/ 0{SLIDES.length}</span>
           <span className="slide-category">{current.category}</span>
         </div>
 
         <div className="showcase-controls">
+          <div className="slide-pills-row">
+            {SLIDES.map((s, idx) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`slide-pill ${idx === currentIdx ? "active" : ""}`}
+                onClick={() => setCurrentIdx(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
           <button
             type="button"
             className="control-arrow-btn"
             onClick={prevSlide}
-            aria-label="Previous Slide"
-            data-cursor="PREV"
+            aria-label="Previous slide"
           >
-            <ChevronLeft size={18} />
+            <ArrowLeft size={16} />
           </button>
-          <div className="slide-pills-row">
-            {SLIDES.map((slide, idx) => (
-              <button
-                key={slide.id}
-                type="button"
-                className={`slide-pill ${currentIndex === idx ? "active" : ""}`}
-                onClick={() => setCurrentIndex(idx)}
-                data-cursor={slide.num}
-              />
-            ))}
-          </div>
           <button
             type="button"
             className="control-arrow-btn"
             onClick={nextSlide}
-            aria-label="Next Slide"
-            data-cursor="NEXT"
+            aria-label="Next slide"
           >
-            <ChevronRight size={18} />
+            <ArrowRight size={16} />
           </button>
         </div>
       </div>
 
-      {/* Main Feature Slide Card */}
+      {/* Slide Body */}
       <div className="feature-slide-card">
-        {/* Left Content Side */}
-        <div className="slide-content-pane">
+        {/* Left Information Pane */}
+        <div className="slide-text-pane">
           <div className="slide-eyebrow">
-            <Sparkles size={12} color="#cca77c" />
-            <span>ARCHITECTURAL SUBSYSTEM // {current.num}</span>
+            {current.icon}
+            <span>{current.category}</span>
           </div>
 
           <h3 className="slide-heading">{current.title}</h3>
-          <p className="slide-description">{current.desc}</p>
+          <p className="slide-description">{current.description}</p>
 
           <div className="slide-metric-highlight">
             <div className="metric-figure">{current.metric}</div>
@@ -134,26 +137,25 @@ export function HorizontalShowcase() {
           </div>
 
           <div className="slide-tags-row">
-            {current.tags.map((tag, i) => (
-              <span key={i} className="slide-tag">
-                <CheckCircle2 size={11} color="#cca77c" />
+            {current.tags.map((tag) => (
+              <span key={tag} className="slide-tag">
+                <ArrowUpRight size={12} />
                 <span>{tag}</span>
               </span>
             ))}
           </div>
         </div>
 
-        {/* Right Media Frame */}
-        <div className="slide-media-pane" data-cursor="VIEW">
+        {/* Right Media Pane with Glowing Neon Border */}
+        <div className="slide-media-pane">
           <img
             src={current.image}
             alt={current.title}
             className="slide-image-element"
-            loading="lazy"
           />
           <div className="media-corner-tag">
-            <span>FIGURE // {current.num}</span>
-            <ArrowUpRight size={12} />
+            <Sparkles size={12} />
+            <span>FINSIGHT TELEMETRY</span>
           </div>
         </div>
       </div>
