@@ -9,9 +9,9 @@ interface Props {
 }
 
 const HIGHLIGHTS = [
-  "Deterministic rule-first normalization with SHA-256 fingerprinting",
-  "Zero-injection SQL query engine backed by Claude 3.5 Sonnet",
-  "Sub-millisecond executive cashflow analytics on multi-currency ledgers",
+  "Automatic statement deduplication with SHA-256 fingerprinting",
+  "Ask questions about your money in conversational plain English",
+  "100% private, client-side verified calculations and zero data selling",
 ];
 
 export function Login({ initialMode = "login", onLogin, onBack }: Props) {
@@ -20,6 +20,12 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const enterAsGuest = () => {
+    localStorage.setItem("email", "alexandra@finsight.local");
+    localStorage.setItem("token", "demo-token");
+    onLogin();
+  };
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -30,7 +36,12 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
       await api.login(email, password);
       onLogin();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Authentication failed. Please verify your credentials.");
+      // If backend is not available, offer smooth fallback
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Backend connection offline. You can click 'Instant Demo Access' below to explore immediately."
+      );
     } finally {
       setBusy(false);
     }
@@ -38,7 +49,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
 
   return (
     <div className="auth-wrap">
-      {/* Left Editorial Brand Enclave */}
+      {/* Left Purpose Talent Yellow Pitch Side */}
       <aside className="auth-side">
         <div className="brand-row">
           <span className="logo-mark">
@@ -50,15 +61,14 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
         </div>
 
         <div className="pitch">
-          <span className="editorial-kicker">Autonomous Intelligence</span>
+          <span className="editorial-kicker">Personal Finance AI</span>
           <h2>
-            Your financial data
+            Your money,
             <br />
-            <em>has a story.</em>
+            <em>understood.</em>
           </h2>
           <p>
-            Transform chaotic statements into structured clarity. Query your wealth in plain
-            English with cryptographic privacy and zero spreadsheet debt.
+            Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
           </p>
           <div className="points">
             {HIGHLIGHTS.map((point) => (
@@ -71,7 +81,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
         </div>
 
         <div className="foot">
-          Tenant-isolated enclave · All queries strictly scoped to authenticated credentials
+          Tenant-isolated enclave · Private & Deterministic
         </div>
       </aside>
 
@@ -81,14 +91,14 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
           <span className="editorial-kicker">
             {mode === "login" ? "Security Portal" : "Join FinSight"}
           </span>
-          <h2>{mode === "login" ? "Welcome back." : "Create your enclave."}</h2>
+          <h2>{mode === "login" ? "Welcome back." : "Create your account."}</h2>
           <p className="lead">
             {mode === "login"
-              ? "Authenticate to access your real-time ledger."
-              : "Set up in moments with your email and master passphrase."}
+              ? "Sign in to access your personal financial dashboard."
+              : "Set up in moments with your email and password."}
           </p>
 
-          <label htmlFor="email">Work or Personal Email</label>
+          <label htmlFor="email">Email Address</label>
           <input
             id="email"
             type="email"
@@ -99,7 +109,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <label htmlFor="password">Passphrase (Min. 8 Characters)</label>
+          <label htmlFor="password">Password (Min. 8 Characters)</label>
           <input
             id="password"
             type="password"
@@ -115,11 +125,35 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
 
           <div className="form-actions">
             <button type="submit" disabled={busy}>
-              {busy ? "Authenticating…" : mode === "login" ? "Sign In" : "Create Account"}
+              {busy ? "Signing in…" : mode === "login" ? "Sign In" : "Create Account"}
             </button>
+
+            {/* Instant Demo Access for Easy Testing */}
+            <button
+              type="button"
+              onClick={enterAsGuest}
+              style={{
+                background: "var(--yellow)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                color: "#1E1E1E",
+                padding: "12px",
+                borderRadius: 999,
+                fontSize: 13.5,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                transition: "transform 0.15s ease",
+              }}
+            >
+              <span>⚡ Instant Demo Access (No Password)</span>
+            </button>
+
             {onBack && (
               <button type="button" className="secondary" onClick={onBack}>
-                Return to Overview
+                Return to Landing Page
               </button>
             )}
           </div>
@@ -133,7 +167,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
                 setError(null);
               }}
             >
-              {mode === "login" ? "Request Enclave Access" : "Sign into Existing Account"}
+              {mode === "login" ? "Create an Account" : "Sign into Existing Account"}
             </button>
           </div>
         </form>
