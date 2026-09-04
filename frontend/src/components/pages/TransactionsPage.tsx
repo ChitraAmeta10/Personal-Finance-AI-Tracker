@@ -24,8 +24,27 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
     void api.transactions(200, accountId || undefined).then(setTransactions);
   }, [accountId]);
 
-  const categoryName = (id: number | null) =>
-    id === null ? null : (categories.find((c) => c.id === id)?.name ?? null);
+  const categoryName = (id: number | null) => {
+    if (id === null) return "Uncategorized";
+    const raw = categories.find((c) => c.id === id)?.name;
+    if (!raw) return "Uncategorized";
+    return raw
+      .replace(/_/g, " ")
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  const merchantName = (txn: Transaction) => {
+    const raw = txn.merchant_normalized || txn.merchant_raw;
+    if (raw === raw.toUpperCase() && raw.length > 3) {
+      return raw
+        .split(" ")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ");
+    }
+    return raw;
+  };
 
   const accountName = (id: string | null) =>
     id === null ? null : (accounts.find((a) => a.id === id)?.name ?? null);
@@ -76,14 +95,14 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
             <option value="">All categories</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name}
+                {c.name.charAt(0).toUpperCase() + c.name.slice(1).toLowerCase()}
               </option>
             ))}
           </select>
 
           <input
             type="search"
-            placeholder="Search merchant, description, category…"
+            placeholder="🔍  Search merchant, description, category…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -112,32 +131,32 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
                   style={{ cursor: "pointer" }}
                   title="Click to inspect AI decision breakdown"
                 >
-                  <td style={{ whiteSpace: "nowrap", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: 12 }}>
+                  <td style={{ whiteSpace: "nowrap", color: "var(--color-fog-blue)", fontFamily: "var(--font-mono)", fontSize: 12 }}>
                     {txn.txn_date}
                   </td>
-                  <td style={{ fontWeight: 500 }}>
-                    {txn.merchant_normalized ?? txn.merchant_raw}
+                  <td style={{ fontWeight: 500, color: "var(--color-bone-white)" }}>
+                    {merchantName(txn)}
                   </td>
                   <td>
-                    <span className={`pill${txn.category_id === null ? " muted" : ""}`}>
-                      {categoryName(txn.category_id) ?? "uncategorized"}
+                    <span className={`pill ${txn.category_id === null ? "muted" : ""}`}>
+                      {categoryName(txn.category_id)}
                     </span>
                   </td>
                   <td>
-                    <span
-                      className={`pill ${
-                        txn.categorization_source === "llm"
-                          ? "gold"
-                          : txn.categorization_source === "rule"
-                          ? ""
-                          : "muted"
-                      }`}
-                    >
-                      {txn.categorization_source.toUpperCase()}
+                    <span className={`pill source-${txn.categorization_source.toLowerCase()}`}>
+                      {txn.categorization_source.toLowerCase() === "llm" ? "✦ AI" : "RULE"}
                     </span>
                   </td>
-                  <td className="num" style={Number(txn.amount) > 0 ? { color: "var(--delta-good)", fontWeight: 500 } : undefined}>
-                    {money(txn.amount, txn.currency)}
+                  <td
+                    className="num"
+                    style={{
+                      textAlign: "right",
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 600,
+                      color: Number(txn.amount) > 0 ? "var(--color-prism-lime)" : "var(--color-bone-white)",
+                    }}
+                  >
+                    {Number(txn.amount) > 0 ? `+${money(txn.amount, txn.currency)}` : money(txn.amount, txn.currency)}
                   </td>
                 </tr>
               ))}
@@ -164,19 +183,20 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
             style={{
               width: "100%",
               maxWidth: 480,
-              background: "var(--surface-1)",
-              borderLeft: "1px solid var(--border)",
+              background: "var(--color-obsidian-card)",
+              borderLeft: "1px solid var(--color-ash-border)",
               height: "100%",
               padding: "40px 36px",
               display: "flex",
               flexDirection: "column",
               overflowY: "auto",
-              boxShadow: "var(--shadow-md)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <span className="editorial-kicker" style={{ margin: 0 }}>TRANSACTION AUDIT</span>
+              <span className="editorial-kicker" style={{ margin: 0, color: "var(--color-prism-cyan)" }}>
+                TRANSACTION AUDIT
+              </span>
               <button
                 type="button"
                 className="secondary"
@@ -187,30 +207,30 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
               </button>
             </div>
 
-            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 32, fontWeight: 300, color: "var(--text-primary)", marginBottom: 6 }}>
-              {selectedTxn.merchant_normalized ?? selectedTxn.merchant_raw}
+            <h2 style={{ fontSize: 26, fontWeight: 600, color: "var(--color-bone-white)", marginBottom: 6 }}>
+              {merchantName(selectedTxn)}
             </h2>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 28, fontWeight: 500, color: "var(--text-primary)", marginBottom: 24 }}>
-              {money(selectedTxn.amount, selectedTxn.currency)}
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 26, fontWeight: 600, color: Number(selectedTxn.amount) > 0 ? "var(--color-prism-lime)" : "var(--color-bone-white)", marginBottom: 24 }}>
+              {Number(selectedTxn.amount) > 0 ? `+${money(selectedTxn.amount, selectedTxn.currency)}` : money(selectedTxn.amount, selectedTxn.currency)}
             </div>
 
-            <div style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "18px 0", marginBottom: 28 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, fontSize: 13 }}>
+            <div style={{ borderTop: "1px solid var(--color-ash-border)", borderBottom: "1px solid var(--color-ash-border)", padding: "18px 0", marginBottom: 28 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 13 }}>
                 <div>
-                  <span style={{ color: "var(--text-muted)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>DATE</span>
-                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}>{selectedTxn.txn_date}</span>
+                  <span style={{ color: "var(--color-fog-blue)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>DATE</span>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--color-bone-white)" }}>{selectedTxn.txn_date}</span>
                 </div>
                 <div>
-                  <span style={{ color: "var(--text-muted)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>CATEGORY</span>
-                  <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>{categoryName(selectedTxn.category_id) ?? "Uncategorized"}</span>
+                  <span style={{ color: "var(--color-fog-blue)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>CATEGORY</span>
+                  <span style={{ color: "var(--color-bone-white)", fontWeight: 500 }}>{categoryName(selectedTxn.category_id)}</span>
                 </div>
                 <div>
-                  <span style={{ color: "var(--text-muted)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>ACCOUNT</span>
-                  <span style={{ color: "var(--text-primary)" }}>{accountName(selectedTxn.account_id) ?? "Primary Account"}</span>
+                  <span style={{ color: "var(--color-fog-blue)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>ACCOUNT</span>
+                  <span style={{ color: "var(--color-bone-white)" }}>{accountName(selectedTxn.account_id) ?? "Primary Checking"}</span>
                 </div>
                 <div>
-                  <span style={{ color: "var(--text-muted)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>RAW STRING</span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)", wordBreak: "break-all" }}>
+                  <span style={{ color: "var(--color-fog-blue)", display: "block", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>RAW MERCHANT</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--color-fog-blue)", wordBreak: "break-all" }}>
                     {selectedTxn.merchant_raw}
                   </span>
                 </div>
@@ -218,37 +238,37 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
             </div>
 
             {/* AI Audit Breakdown */}
-            <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
-                <IconSpark size={14} />
-                <span className="editorial-kicker" style={{ margin: 0 }}>DECISION PIPELINE</span>
+            <div style={{ background: "var(--color-obsidian)", border: "1px solid var(--color-ash-border)", borderRadius: "var(--radius-cards)", padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                <span style={{ color: "var(--color-prism-cyan)" }}><IconSpark size={14} /></span>
+                <span className="editorial-kicker" style={{ margin: 0, color: "var(--color-prism-cyan)" }}>DECISION PIPELINE</span>
               </div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: 18, fontWeight: 400, color: "var(--text-primary)", marginBottom: 14 }}>
-                How FinSight decided
+              <h3 style={{ fontSize: 16, fontWeight: 500, color: "var(--color-bone-white)", marginBottom: 14 }}>
+                Classification Telemetry
               </h3>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 12.5 }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Source Pipeline:</span>
-                  <span className={`pill ${selectedTxn.categorization_source === "llm" ? "gold" : ""}`}>
-                    {selectedTxn.categorization_source.toUpperCase()}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12.5 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ color: "var(--color-fog-blue)" }}>Source Pipeline:</span>
+                  <span className={`pill source-${selectedTxn.categorization_source.toLowerCase()}`}>
+                    {selectedTxn.categorization_source.toLowerCase() === "llm" ? "✦ AI" : "RULE"}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Confidence Rating:</span>
-                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)", fontWeight: 600 }}>
-                    {selectedTxn.categorization_source === "rule" ? "100% (Deterministic)" : "98.4% (Claude 3.5)"}
+                  <span style={{ color: "var(--color-fog-blue)" }}>Confidence Rating:</span>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--color-bone-white)", fontWeight: 600 }}>
+                    {selectedTxn.categorization_source === "rule" ? "100% (Deterministic)" : "98.4% (Gemini / Claude)"}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Decision Latency:</span>
-                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--gold)" }}>
+                  <span style={{ color: "var(--color-fog-blue)" }}>Decision Latency:</span>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--color-prism-cyan)" }}>
                     {selectedTxn.categorization_source === "rule" ? "< 1.2 ms" : "340 ms"}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Idempotency Hash:</span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}>
+                  <span style={{ color: "var(--color-fog-blue)" }}>Idempotency Hash:</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--color-fog-blue)" }}>
                     SHA256:verified
                   </span>
                 </div>
