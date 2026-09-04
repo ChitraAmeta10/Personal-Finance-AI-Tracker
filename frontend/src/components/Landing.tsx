@@ -18,6 +18,9 @@ import {
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
+import { CustomCursor } from "./landing/CustomCursor";
+import { InfiniteShowcaseCarousel } from "./landing/InfiniteShowcaseCarousel";
+import { EditorialMenuOverlay } from "./landing/EditorialMenuOverlay";
 
 interface Props {
   onGetStarted: () => void;
@@ -27,6 +30,8 @@ interface Props {
 type Segment = "personal" | "business" | "platform";
 
 export function Landing({ onGetStarted, onSignIn }: Props) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   // Live local time
   const [currentTime, setCurrentTime] = useState("");
   useEffect(() => {
@@ -131,6 +136,17 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
   return (
     <div className="fluz-site-layout">
+      {/* Precision Modern Liquid Cursor */}
+      <CustomCursor />
+
+      {/* Full-Screen Editorial Menu Overlay with dynamic link previews */}
+      <EditorialMenuOverlay
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onGetStarted={onGetStarted}
+        onSignIn={onSignIn}
+      />
+
       {/* ==================== DUAL-TIER TOP NAVIGATION ==================== */}
       <div className="fluz-nav-wrapper">
         {/* Sub-strip (Fluz Money / Marketplace / Blog row) */}
@@ -228,9 +244,24 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                 type="button"
                 className="fluz-btn-cta-pill"
                 onClick={onGetStarted}
+                data-cursor="START"
               >
                 <span>Get Started</span>
                 <ArrowUpRight size={13} />
+              </button>
+
+              <button
+                type="button"
+                className="fluz-btn-menu-trigger"
+                onClick={() => setIsMenuOpen(true)}
+                data-cursor="MENU"
+                title="Open Editorial Navigation"
+              >
+                <span className="menu-burger-bars">
+                  <span className="burger-bar" />
+                  <span className="burger-bar" />
+                </span>
+                <span className="menu-burger-label">MENU</span>
               </button>
             </div>
           </div>
@@ -544,6 +575,9 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
           </div>
         </section>
+
+        {/* ==================== INFINITE 3D CAROUSEL (Continuous Visual Architecture) ==================== */}
+        <InfiniteShowcaseCarousel onSelectCard={onGetStarted} />
 
         {/* ==================== INTERACTIVE STATEMENT TRANSFORMER ==================== */}
         <section className="fluz-transformer-section">
