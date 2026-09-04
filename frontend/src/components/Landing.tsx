@@ -1,23 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  CheckCircle2,
-  Menu,
-  ShieldCheck,
-  Sparkles,
-  UploadCloud,
-  X,
-} from "lucide-react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState, useEffect } from "react";
+import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface Props {
   onGetStarted: () => void;
@@ -39,91 +25,33 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  // Full-screen menu overlay state
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  // Synchronized Lenis + GSAP ScrollTrigger
+  // Smooth Lenis Scroll
   useEffect(() => {
-    // Check reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
 
-    lenis.on("scroll", ScrollTrigger.update);
-
-    const tickerCallback = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
 
     return () => {
-      gsap.ticker.remove(tickerCallback);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
-  // Hero Headline GSAP Staggered Entrance Reveal
-  const heroTextRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".hero-stagger-word", {
-        y: 80,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.12,
-        ease: "power3.out",
-        delay: 0.1,
-      });
-
-      gsap.from(".hero-anim-sub", {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.45,
-      });
-
-      gsap.from(".hero-anim-action", {
-        y: 20,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power2.out",
-        delay: 0.6,
-      });
-    }, heroTextRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // 3D Spatial recession on hero scroll (Apple/Purpose Talent kinematics)
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  const heroScale = useTransform(smoothProgress, [0, 1], [1, 0.9]);
-  const heroRotateX = useTransform(smoothProgress, [0, 1], [0, 14]);
-  const heroTranslateY = useTransform(smoothProgress, [0, 1], [0, 50]);
-  const heroOpacity = useTransform(smoothProgress, [0, 0.85, 1], [1, 0.95, 0.6]);
-
-  // Overall page scroll progress bar
-  const { scrollYProgress: pageScroll } = useScroll();
-  const scaleX = useSpring(pageScroll, { stiffness: 100, damping: 30 });
+  // Minimal scroll progress bar
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   // Interactive Statement Transformer sample
   const [activeSample, setActiveSample] = useState<"coffee" | "airline" | "software">("coffee");
@@ -159,76 +87,10 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
   return (
     <div className="pt-layout">
-      {/* Paper Grain Noise Texture */}
-      <div className="pt-noise" />
-
-      {/* Advanced Minimal Scroll Progress Bar */}
+      {/* Precision Scroll Progress Bar */}
       <motion.div className="pt-scroll-progress-bar" style={{ scaleX }} />
 
-      {/* ==================== FULL-SCREEN EDITORIAL MENU OVERLAY ==================== */}
-      <div className={`pt-menu-overlay ${menuOpen ? "open" : ""}`}>
-        <div className="pt-menu-top">
-          <div className="pt-logo" style={{ color: "#FFFFFF" }}>
-            <span>FinSight</span>
-            <span className="pt-logo-dot" />
-          </div>
-          <button
-            type="button"
-            className="pt-menu-close-btn"
-            onClick={() => setMenuOpen(false)}
-            aria-label="Close menu"
-          >
-            <X size={16} style={{ display: "inline-block", verticalAlign: "middle", marginRight: 6 }} />
-            <span>Close</span>
-          </button>
-        </div>
-
-        <nav className="pt-menu-links">
-          <a
-            href="#how-it-works"
-            className="pt-menu-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="menu-num">01</span>
-            <span>Statements</span>
-          </a>
-          <a
-            href="#cards"
-            className="pt-menu-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="menu-num">02</span>
-            <span>Intelligence</span>
-          </a>
-          <a
-            href="#ask-ai"
-            className="pt-menu-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="menu-num">03</span>
-            <span>Ask FinSight</span>
-          </a>
-          <button
-            type="button"
-            className="pt-menu-link"
-            style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}
-            onClick={() => {
-              setMenuOpen(false);
-              onGetStarted();
-            }}
-          >
-            <span className="menu-num">04</span>
-            <span style={{ color: "var(--pt-yellow)" }}>Get Started →</span>
-          </button>
-        </nav>
-
-        <div className="pt-menu-bottom">
-          <div>FinSight · Personal Finance AI Tracker</div>
-          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Private Enclave</div>
-        </div>
-      </div>
-
-      {/* ==================== FLOATING PILL NAV ==================== */}
+      {/* ==================== NAVIGATION ==================== */}
       <div className="pt-nav-wrapper">
         <header className="pt-nav-bar">
           <div className="pt-nav-left">
@@ -238,17 +100,14 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </a>
 
             <nav className="pt-nav-links" aria-label="Main Navigation">
-              <a href="#how-it-works" className="pt-nav-pill-btn">
-                <span className="ico-box">💳</span>
-                <span>Statements</span>
+              <a href="#statements" className="pt-nav-ghost-btn">
+                Statements
               </a>
-              <a href="#ask-ai" className="pt-nav-pill-btn">
-                <span className="ico-box">✨</span>
-                <span>Ask AI</span>
+              <a href="#intelligence" className="pt-nav-ghost-btn">
+                Intelligence
               </a>
-              <a href="#cards" className="pt-nav-pill-btn">
-                <span className="ico-box">📈</span>
-                <span>Features</span>
+              <a href="#security" className="pt-nav-ghost-btn">
+                Security
               </a>
             </nav>
           </div>
@@ -263,132 +122,119 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               Sign In
             </button>
 
-            <button type="button" className="pt-btn-cta" onClick={onGetStarted}>
-              <span>Get Started</span>
-              <ArrowUpRight size={13} />
-            </button>
-
-            {/* Menu Trigger Button */}
             <button
               type="button"
-              className="pt-nav-pill-btn"
-              style={{ padding: "8px 12px" }}
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open Navigation Menu"
+              className="pt-btn-outlined-cta"
+              onClick={onGetStarted}
             >
-              <Menu size={16} />
+              <span>Get Started</span>
+              <ArrowUpRight size={13} />
             </button>
           </div>
         </header>
       </div>
 
       <div className="pt-container">
-        {/* ==================== HERO SECTION WITH 3D SPATIAL SCROLL ==================== */}
+        {/* ==================== HERO SECTION ==================== */}
         <main>
-          <section ref={heroRef} className="pt-hero">
-            <div ref={heroTextRef} className="pt-hero-headline-wrap">
-              <div className="pt-hero-tag hero-anim-sub">
-                <span>Personal Finance AI Tracker</span>
-              </div>
-
-              <h1 className="pt-hero-title">
-                <span className="pt-line-mask">
-                  <span className="hero-stagger-word">Your money,</span>
-                </span>
-                <span className="pt-line-mask">
-                  <span className="hero-stagger-word highlight-yellow">understood.</span>
-                </span>
-              </h1>
-
-              <p className="pt-hero-subtitle hero-anim-sub">
-                Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
-              </p>
-
-              <div className="pt-hero-actions">
-                <button
-                  type="button"
-                  className="pt-btn-hero-main hero-anim-action"
-                  onClick={onGetStarted}
-                >
-                  <span>Get Started Free</span>
-                  <ArrowRight size={15} />
-                </button>
-                <a href="#how-it-works" className="pt-btn-hero-secondary hero-anim-action">
-                  <span>See How It Works</span>
-                </a>
-              </div>
+          <section className="pt-hero">
+            <div className="pt-hero-eyebrow">
+              Autonomous Intelligence · Multi-Currency Ledgers
             </div>
 
-            {/* Advanced 3D Spatial Scroll Card */}
-            <motion.div
-              id="how-it-works"
-              className="pt-transformer-card-perspective-wrapper"
-              style={{
-                scale: heroScale,
-                rotateX: heroRotateX,
-                y: heroTranslateY,
-                opacity: heroOpacity,
-                transformPerspective: 1200,
-              }}
-            >
-              <div className="pt-transformer-card">
-                <div className="transformer-header">
-                  <span className="transformer-label">Interactive Statement Transformer</span>
-                  <div className="statement-tabs-row">
-                    <button
-                      type="button"
-                      className={`stm-tab ${activeSample === "coffee" ? "active" : ""}`}
-                      onClick={() => setActiveSample("coffee")}
-                    >
-                      Coffee Purchase
-                    </button>
-                    <button
-                      type="button"
-                      className={`stm-tab ${activeSample === "airline" ? "active" : ""}`}
-                      onClick={() => setActiveSample("airline")}
-                    >
-                      Flight Ticket
-                    </button>
-                    <button
-                      type="button"
-                      className={`stm-tab ${activeSample === "software" ? "active" : ""}`}
-                      onClick={() => setActiveSample("software")}
-                    >
-                      SaaS Subscription
-                    </button>
-                  </div>
+            {/* Display Headline at 105–136px, Weight 400, Line Height 1.00, Tight Tracking */}
+            <h1 className="pt-hero-display-title">
+              MONEY,
+              <br />
+              MADE VISIBLE.
+            </h1>
+
+            {/* Subtitle Left-Aligned beneath the prism artifact, max-width 440px */}
+            <p className="pt-hero-subtitle">
+              Drop your bank statements. FinSight refracts chaotic raw transactions into crystal-clear insights with zero spreadsheet debt.
+            </p>
+
+            <div className="pt-hero-actions">
+              <button
+                type="button"
+                className="pt-btn-outlined-cta"
+                style={{ padding: "14px 28px", fontSize: "14px" }}
+                onClick={onGetStarted}
+              >
+                <span>Get Started Free</span>
+                <ArrowRight size={14} />
+              </button>
+              <a
+                href="#statements"
+                className="pt-nav-ghost-btn"
+                style={{ fontSize: "14px", padding: "14px 0" }}
+              >
+                See How It Works →
+              </a>
+            </div>
+
+            {/* ==================== CHROMATIC PRISM HERO ARTIFACT ==================== */}
+            <div id="statements" className="pt-prism-artifact-container">
+              <div className="pt-prism-caustics-glow" />
+
+              <div className="transformer-header">
+                <span className="transformer-label">Chromatic Statement Refraction</span>
+                <div className="statement-tabs-row">
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "coffee" ? "active" : ""}`}
+                    onClick={() => setActiveSample("coffee")}
+                  >
+                    Coffee Purchase
+                  </button>
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "airline" ? "active" : ""}`}
+                    onClick={() => setActiveSample("airline")}
+                  >
+                    Flight Ticket
+                  </button>
+                  <button
+                    type="button"
+                    className={`stm-tab ${activeSample === "software" ? "active" : ""}`}
+                    onClick={() => setActiveSample("software")}
+                  >
+                    SaaS Subscription
+                  </button>
+                </div>
+              </div>
+
+              <div className="transformer-grid">
+                {/* Raw Input String */}
+                <div className="raw-statement-box">
+                  <div className="raw-header">Raw Ledger String</div>
+                  <div className="raw-text">{currentSample.raw}</div>
                 </div>
 
-                <div className="transformer-grid">
-                  {/* Raw Bank Text */}
-                  <div className="raw-statement-box">
-                    <div className="raw-header">Messy Bank Export</div>
-                    <div className="raw-text">{currentSample.raw}</div>
+                {/* Chromatic Prism Caustic Glyph */}
+                <div className="transformer-prism-cube">
+                  <div className="prism-cube-core" />
+                </div>
+
+                {/* Refracted Output Card */}
+                <div className="cleaned-card-box">
+                  <div className="cleaned-header">
+                    <span className="cleaned-cat-badge">
+                      <Sparkles size={13} />
+                      <span>{currentSample.category}</span>
+                    </span>
+                    <span className="cleaned-amount">{currentSample.amount}</span>
                   </div>
-
-                  {/* Transformation Arrow */}
-                  <div className="transformer-arrow">→</div>
-
-                  {/* Cleaned FinSight Card */}
-                  <div className="cleaned-card-box">
-                    <div className="cleaned-header">
-                      <span className="cleaned-cat-badge">
-                        <Sparkles size={12} />
-                        <span>{currentSample.category}</span>
-                      </span>
-                      <span className="cleaned-amount">{currentSample.amount}</span>
-                    </div>
-                    <div className="cleaned-merchant">{currentSample.cleanMerchant}</div>
-                    <div className="cleaned-meta">
-                      {currentSample.account} · {currentSample.confidence}
-                    </div>
+                  <div className="cleaned-merchant">{currentSample.cleanMerchant}</div>
+                  <div className="cleaned-meta">
+                    {currentSample.account} · {currentSample.confidence}
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </section>
 
-          {/* ==================== INFINITE HORIZONTAL EDITORIAL MARQUEE ==================== */}
+          {/* ==================== INFINITE MARQUEE ==================== */}
           <div className="pt-marquee-wrap" aria-hidden="true">
             <div className="pt-marquee-track">
               <div className="pt-marquee-item">
@@ -418,155 +264,61 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
           </div>
 
-          {/* ==================== STICKY STACKING CARDS WITH PARALLAX TILT ==================== */}
-          <section id="cards" className="pt-stack-section">
-            <div className="pt-stack-intro">
-              <div className="stack-eyebrow">Everything In One Place</div>
-              <h2 className="stack-title">How FinSight organizes your life.</h2>
-            </div>
+          {/* ==================== EDITORIAL CONTENT BANDS ==================== */}
+          <section id="intelligence" className="pt-editorial-section">
+            <div className="section-eyebrow">Taxonomy & Architecture</div>
+            <h2 className="section-heading-sm">
+              Deterministic categorization on verified ledgers.
+            </h2>
 
-            <div className="pt-cards-stack-container">
-              {/* Card 01: Yellow */}
-              <motion.div
-                className="pt-sticky-card card-yellow"
-                style={{ rotate: -1.5 }}
-                whileHover={{ scale: 1.01, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
+            <div className="editorial-cards-grid">
+              <div className="editorial-card">
                 <div>
-                  <div className="card-num">01 / Ingestion</div>
-                  <h3 className="card-heading">Drop Any Bank CSV</h3>
+                  <div className="card-step-num">01 / INGESTION</div>
+                  <h3 className="card-title">Drop Any Bank CSV</h3>
                   <p className="card-desc">
-                    Chase, Amex, Apple Card, or local credit unions. Drop any statement format — FinSight automatically deduplicates and normalizes every row in seconds.
+                    Chase, Amex, Apple Card, or local credit unions. Automated SHA-256 fingerprinting ensures duplicate charges are discarded in zero runtime cycles.
                   </p>
                 </div>
-                <div className="card-visual-slot">
-                  <div className="visual-chip-row">
-                    <span className="mini-badge">
-                      <UploadCloud size={13} />
-                      <span>CSV / PDF / QFX</span>
-                    </span>
-                    <span className="mini-badge">
-                      <Check size={13} />
-                      <span>Zero Duplicates</span>
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--pt-ink)", fontWeight: 600 }}>
-                    Instant Statement Reconciliation
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--pt-ink-subtle)", marginTop: 4 }}>
-                    Automated SHA-256 fingerprinting ensures duplicate charges are discarded in zero runtime cycles.
-                  </div>
-                </div>
-              </motion.div>
+              </div>
 
-              {/* Card 02: Purple */}
-              <motion.div
-                id="ask-ai"
-                className="pt-sticky-card card-purple"
-                style={{ rotate: 1.2 }}
-                whileHover={{ scale: 1.01, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
+              <div className="editorial-card">
                 <div>
-                  <div className="card-num">02 / AI Intelligence</div>
-                  <h3 className="card-heading">Ask in Plain English</h3>
+                  <div className="card-step-num">02 / NATURAL SQL</div>
+                  <h3 className="card-title">Ask in Plain English</h3>
                   <p className="card-desc">
-                    No formulas, no pivot tables. Ask natural questions like <em>"How much did I spend on dining out last month?"</em> and get clear, verified answers backed by math.
+                    Query your personal finances with conversational questions. Verified Abstract Syntax Trees guarantee SELECT-only deterministic math.
                   </p>
                 </div>
-                <div className="card-visual-slot">
-                  <div className="visual-mock-query">
-                    💬 "What were my top 3 expenses in February?"
-                  </div>
-                  <div className="visual-mock-answer">
-                    1. Rent & Housing ($2,400)<br />
-                    2. Flight to Austin ($382)<br />
-                    3. Whole Foods Groceries ($184)
-                  </div>
-                </div>
-              </motion.div>
+              </div>
 
-              {/* Card 03: Coral */}
-              <motion.div
-                className="pt-sticky-card card-coral"
-                style={{ rotate: -0.8 }}
-                whileHover={{ scale: 1.01, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
+              <div id="security" className="editorial-card">
                 <div>
-                  <div className="card-num">03 / Wealth Protection</div>
-                  <h3 className="card-heading">Catch Recurring Leaks</h3>
+                  <div className="card-step-num">03 / PRIVATE ENCLAVE</div>
+                  <h3 className="card-title">100% Tenant Isolated</h3>
                   <p className="card-desc">
-                    Automatically spots forgotten $14.99 SaaS trials, duplicate streaming charges, and price creep before they quietly drain your savings.
+                    Your financial records belong exclusively to you. No behavioral tracking, zero third-party ads, and no selling your data to credit brokers.
                   </p>
                 </div>
-                <div className="card-visual-slot">
-                  <div className="visual-chip-row">
-                    <span className="mini-badge" style={{ background: "#FEE2E2", color: "#991B1B" }}>
-                      ⚠️ Price Increase
-                    </span>
-                    <span className="mini-badge">Streaming +$3/mo</span>
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--pt-ink)", fontWeight: 600 }}>
-                    Monthly Waste Eliminator
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--pt-ink-subtle)", marginTop: 4 }}>
-                    Identified $64/month in unused subscriptions ready for cancellation.
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Card 04: Dark */}
-              <motion.div
-                className="pt-sticky-card card-dark"
-                style={{ rotate: 0 }}
-                whileHover={{ scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <div>
-                  <div className="card-num">04 / Privacy & Security</div>
-                  <h3 className="card-heading" style={{ color: "#FFFFFF" }}>100% Private Enclave</h3>
-                  <p className="card-desc">
-                    Your financial data belongs exclusively to you. No tracking, no selling your bank data to credit card brokers, zero third-party ads.
-                  </p>
-                </div>
-                <div className="card-visual-slot">
-                  <div className="visual-chip-row">
-                    <span className="mini-badge">
-                      <ShieldCheck size={13} color="#22C55E" />
-                      <span>AES-256 Encryption</span>
-                    </span>
-                    <span className="mini-badge">
-                      <CheckCircle2 size={13} color="#22C55E" />
-                      <span>Tenant Isolated</span>
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>
-                    Deterministic SQL Security
-                  </div>
-                  <div style={{ fontSize: 12, color: "#A1A1AA", marginTop: 4 }}>
-                    Strict SELECT-only execution guardrails scoped to your personal user account.
-                  </div>
-                </div>
-              </motion.div>
+              </div>
             </div>
           </section>
 
-          {/* ==================== BOTTOM CTA ==================== */}
+          {/* ==================== CLOSING CTA ==================== */}
           <section className="pt-cta-section">
             <div className="pt-cta-box">
-              <h2 className="pt-cta-title">Ready to see your money clearly?</h2>
+              <h2 className="pt-cta-title">See your money clearly.</h2>
               <p className="pt-cta-sub">
                 Join users who took control of their spending with FinSight. No credit card required to get started.
               </p>
               <button
                 type="button"
-                className="pt-btn-hero-main"
+                className="pt-btn-outlined-cta"
+                style={{ padding: "14px 28px", fontSize: "14px" }}
                 onClick={onGetStarted}
               >
                 <span>Get Started Free</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={14} />
               </button>
             </div>
           </section>
@@ -575,7 +327,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
         {/* ==================== FOOTER ==================== */}
         <footer className="pt-footer">
           <div>FinSight · Personal Finance AI Tracker</div>
-          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Private & Deterministic</div>
+          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Obsidian Enclave</div>
         </footer>
       </div>
     </div>

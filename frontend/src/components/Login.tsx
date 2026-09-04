@@ -36,7 +36,6 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
       await api.login(email, password);
       onLogin();
     } catch (err) {
-      // If backend is not available, offer smooth fallback
       setError(
         err instanceof ApiError
           ? err.message
@@ -49,11 +48,11 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
 
   return (
     <div className="auth-wrap">
-      {/* Left Purpose Talent Yellow Pitch Side */}
+      {/* Left Obsidian Pitch Side */}
       <aside className="auth-side">
         <div className="brand-row">
           <span className="logo-mark">
-            <LogoMark size={18} />
+            <LogoMark size={16} />
           </span>
           <span className="name">
             Fin<em>Sight</em>
@@ -61,19 +60,19 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
         </div>
 
         <div className="pitch">
-          <span className="editorial-kicker">Personal Finance AI</span>
+          <span className="editorial-kicker">Autonomous Intelligence</span>
           <h2>
-            Your money,
+            Money,
             <br />
-            <em>understood.</em>
+            <em>made visible.</em>
           </h2>
           <p>
-            Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
+            Drop your bank statements. FinSight refracts chaotic raw transactions into crystal-clear insights with zero spreadsheet debt.
           </p>
           <div className="points">
             {HIGHLIGHTS.map((point) => (
               <div className="point" key={point}>
-                <span className="tick">✓</span>
+                <span className="tick">✦</span>
                 <span>{point}</span>
               </div>
             ))}
@@ -94,7 +93,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
           <h2>{mode === "login" ? "Welcome back." : "Create your account."}</h2>
           <p className="lead">
             {mode === "login"
-              ? "Sign in to access your personal financial dashboard."
+              ? "Sign in to access your personal financial ledger."
               : "Set up in moments with your email and password."}
           </p>
 
@@ -128,32 +127,34 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
               {busy ? "Signing in…" : mode === "login" ? "Sign In" : "Create Account"}
             </button>
 
-            {/* Instant Demo Access for Easy Testing */}
+            {/* Instant Demo Access Button */}
             <button
               type="button"
               onClick={enterAsGuest}
               style={{
-                background: "var(--yellow)",
-                border: "1px solid rgba(0, 0, 0, 0.1)",
-                color: "#1E1E1E",
+                background: "transparent",
+                border: "1px solid var(--color-prism-cyan)",
+                color: "var(--color-prism-cyan)",
                 padding: "12px",
-                borderRadius: 999,
-                fontSize: 13.5,
-                fontWeight: 700,
+                borderRadius: "5px",
+                fontSize: "13px",
+                fontWeight: 400,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 6,
-                transition: "transform 0.15s ease",
+                transition: "all 0.3s var(--ease-vivid)",
               }}
             >
-              <span>⚡ Instant Demo Access (No Password)</span>
+              <span>✦ Instant Demo Access (No Password)</span>
             </button>
 
             {onBack && (
               <button type="button" className="secondary" onClick={onBack}>
-                Return to Landing Page
+                Return to Overview
               </button>
             )}
           </div>

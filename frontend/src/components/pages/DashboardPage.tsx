@@ -138,28 +138,32 @@ export function DashboardPage() {
           {data.isDemo ? (
             <span
               style={{
-                background: "#1E1E1E",
-                color: "#FFFFFF",
+                background: "transparent",
+                border: "1px solid var(--color-prism-cyan)",
+                color: "var(--color-prism-cyan)",
                 padding: "6px 14px",
-                borderRadius: 999,
+                borderRadius: "var(--radius-tags)",
                 fontSize: 12,
-                fontWeight: 700,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
               }}
             >
-              Demo Data Active
+              ✦ Demo Data Active
             </span>
           ) : (
             <button
               type="button"
               onClick={loadDemoData}
               style={{
-                background: "rgba(0, 0, 0, 0.08)",
-                border: "none",
+                background: "transparent",
+                border: "1px solid var(--color-ash-border)",
+                color: "var(--color-bone-white)",
                 padding: "6px 14px",
-                borderRadius: 999,
+                borderRadius: "var(--radius-tags)",
                 fontSize: 12,
-                fontWeight: 600,
                 cursor: "pointer",
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
               }}
             >
               Load Demo Data
