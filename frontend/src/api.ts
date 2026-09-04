@@ -1,4 +1,4 @@
-const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8000";
+const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8001";
 
 export interface Account {
   id: string;
@@ -112,7 +112,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     let detail = resp.statusText;
     try {
       const body = await resp.json();
-      if (typeof body.detail === "string") detail = body.detail;
+      if (typeof body.detail === "string") {
+        detail = body.detail;
+      } else if (Array.isArray(body.detail) && body.detail.length > 0 && body.detail[0]?.msg) {
+        detail = body.detail[0].msg;
+      }
     } catch {
       /* non-JSON error body */
     }

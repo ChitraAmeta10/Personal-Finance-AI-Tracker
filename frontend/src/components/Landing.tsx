@@ -117,16 +117,16 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     },
   ];
 
-  // Outer canvas parallax drift (follows scroll down + responds to cursor tilt)
-  const wrapTransform = `translate3d(calc(-50% + ${mousePos.x * 16}px), calc(-50% + ${scrollY * 0.4}px + ${mousePos.y * 16}px), 0) rotate(${scrollY * 0.03}deg)`;
+  // Unified optical parallax (smooth vertical displacement with subtle 3D perspective tilt)
+  const wrapTransform = `translate3d(calc(-50% + ${mousePos.x * 12}px), calc(-50% + ${scrollY * 0.22}px + ${mousePos.y * 12}px), 0) rotateX(${Math.min(scrollY * 0.012, 8)}deg) rotateY(${mousePos.x * 5}deg)`;
 
-  // Multi-cuboid dynamic 3D scroll transforms
-  const cube1Transform = `translate3d(0, ${scrollY * 0.18}px, 0) rotate(${scrollY * 0.07}deg)`;
-  const cube2Transform = `translate3d(${scrollY * 0.32}px, ${-scrollY * 0.15}px, 0) rotate(${-scrollY * 0.1}deg)`;
-  const cube3Transform = `translate3d(${-scrollY * 0.36}px, ${scrollY * 0.38}px, 0) rotate(${scrollY * 0.13}deg)`;
-  const cube4Transform = `translate3d(${-scrollY * 0.26}px, ${-scrollY * 0.2}px, 0) rotate(${-scrollY * 0.08}deg)`;
-  const cube5Transform = `translate3d(${scrollY * 0.3}px, ${scrollY * 0.24}px, 0) rotate(${scrollY * 0.1}deg)`;
-  const causticsTransform = `rotate(${scrollY * 0.06}deg) scale(${1 + Math.min(scrollY, 1000) * 0.0005})`;
+  // Subtle depth-of-field parallax for individual glass facets (no unnatural spinning)
+  const cube1Transform = `translate3d(0, ${scrollY * 0.08}px, 0)`;
+  const cube2Transform = `translate3d(${scrollY * 0.04}px, ${-scrollY * 0.03}px, 0)`;
+  const cube3Transform = `translate3d(${-scrollY * 0.05}px, ${scrollY * 0.14}px, 0)`;
+  const cube4Transform = `translate3d(${-scrollY * 0.03}px, ${-scrollY * 0.05}px, 0)`;
+  const cube5Transform = `translate3d(${scrollY * 0.06}px, ${scrollY * 0.07}px, 0)`;
+  const causticsTransform = `translate3d(${scrollY * 0.04}px, 0, 0) scale(${1 + Math.min(scrollY, 600) * 0.0003})`;
 
   return (
     <div className="vivid-site-layout">
