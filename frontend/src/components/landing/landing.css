@@ -96,6 +96,160 @@ body, html {
 /* ============================================================
    FLOATING PILL NAVIGATION (Purpose Talent Style)
    ============================================================ */
+/* ============================================================
+   HORIZONTAL EDITORIAL MARQUEE
+   ============================================================ */
+.pt-marquee-wrap {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  overflow: hidden;
+  user-select: none;
+  background: var(--pt-ink);
+  color: #FFFFFF;
+  padding: 16px 0;
+  margin-top: 40px;
+  margin-bottom: 80px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pt-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 24s linear infinite;
+}
+
+.pt-marquee-wrap:hover .pt-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.pt-marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pt-marquee-dot {
+  color: var(--pt-yellow);
+  font-size: 16px;
+}
+
+/* ============================================================
+   FULL-SCREEN EDITORIAL MENU OVERLAY (Prompt Section 13)
+   ============================================================ */
+.pt-menu-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.96);
+  backdrop-filter: blur(24px);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 60px;
+  color: #FFFFFF;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pt-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pt-menu-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pt-menu-close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pt-menu-close-btn:hover {
+  background: var(--pt-yellow);
+  color: var(--pt-ink);
+  border-color: var(--pt-yellow);
+}
+
+.pt-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pt-menu-link {
+  font-size: clamp(38px, 6vw, 76px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  transition: transform 0.25s ease, color 0.2s ease;
+}
+
+.pt-menu-link:hover {
+  color: var(--pt-yellow);
+  transform: translateX(14px);
+}
+
+.pt-menu-link .menu-num {
+  font-size: 16px;
+  font-family: var(--font-mono);
+  opacity: 0.5;
+  letter-spacing: 0.1em;
+}
+
+.pt-menu-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 24px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* ============================================================
+   EDITORIAL TEXT MASKS & KINEMATICS
+   ============================================================ */
+.pt-line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.pt-stagger-line {
+  display: inline-block;
+  transform: translateY(0);
+}
+
 .pt-nav-wrapper {
   position: sticky;
   top: 20px;

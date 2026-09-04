@@ -4,14 +4,20 @@ import {
   ArrowUpRight,
   Check,
   CheckCircle2,
+  Menu,
   ShieldCheck,
   Sparkles,
   UploadCloud,
+  X,
 } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Props {
   onGetStarted: () => void;
@@ -33,28 +39,71 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  // Smooth Lenis Scroll
+  // Full-screen menu overlay state
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Synchronized Lenis + GSAP ScrollTrigger
   useEffect(() => {
+    // Check reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const tickerCallback = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+    gsap.ticker.add(tickerCallback);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      gsap.ticker.remove(tickerCallback);
       lenis.destroy();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
-  // Advanced Framer Motion Scroll Progress & 3D Spatial Transforms
+  // Hero Headline GSAP Staggered Entrance Reveal
+  const heroTextRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-stagger-word", {
+        y: 80,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: "power3.out",
+        delay: 0.1,
+      });
+
+      gsap.from(".hero-anim-sub", {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.45,
+      });
+
+      gsap.from(".hero-anim-action", {
+        y: 20,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "power2.out",
+        delay: 0.6,
+      });
+    }, heroTextRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // 3D Spatial recession on hero scroll (Apple/Purpose Talent kinematics)
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -67,13 +116,12 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     restDelta: 0.001,
   });
 
-  // Hero 3D Spatial recession on scroll
   const heroScale = useTransform(smoothProgress, [0, 1], [1, 0.9]);
   const heroRotateX = useTransform(smoothProgress, [0, 1], [0, 14]);
   const heroTranslateY = useTransform(smoothProgress, [0, 1], [0, 50]);
   const heroOpacity = useTransform(smoothProgress, [0, 0.85, 1], [1, 0.95, 0.6]);
 
-  // Overall page scroll progress
+  // Overall page scroll progress bar
   const { scrollYProgress: pageScroll } = useScroll();
   const scaleX = useSpring(pageScroll, { stiffness: 100, damping: 30 });
 
@@ -115,10 +163,70 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       <div className="pt-noise" />
 
       {/* Advanced Minimal Scroll Progress Bar */}
-      <motion.div
-        className="pt-scroll-progress-bar"
-        style={{ scaleX }}
-      />
+      <motion.div className="pt-scroll-progress-bar" style={{ scaleX }} />
+
+      {/* ==================== FULL-SCREEN EDITORIAL MENU OVERLAY ==================== */}
+      <div className={`pt-menu-overlay ${menuOpen ? "open" : ""}`}>
+        <div className="pt-menu-top">
+          <div className="pt-logo" style={{ color: "#FFFFFF" }}>
+            <span>FinSight</span>
+            <span className="pt-logo-dot" />
+          </div>
+          <button
+            type="button"
+            className="pt-menu-close-btn"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={16} style={{ display: "inline-block", verticalAlign: "middle", marginRight: 6 }} />
+            <span>Close</span>
+          </button>
+        </div>
+
+        <nav className="pt-menu-links">
+          <a
+            href="#how-it-works"
+            className="pt-menu-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="menu-num">01</span>
+            <span>Statements</span>
+          </a>
+          <a
+            href="#cards"
+            className="pt-menu-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="menu-num">02</span>
+            <span>Intelligence</span>
+          </a>
+          <a
+            href="#ask-ai"
+            className="pt-menu-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="menu-num">03</span>
+            <span>Ask FinSight</span>
+          </a>
+          <button
+            type="button"
+            className="pt-menu-link"
+            style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}
+            onClick={() => {
+              setMenuOpen(false);
+              onGetStarted();
+            }}
+          >
+            <span className="menu-num">04</span>
+            <span style={{ color: "var(--pt-yellow)" }}>Get Started →</span>
+          </button>
+        </nav>
+
+        <div className="pt-menu-bottom">
+          <div>FinSight · Personal Finance AI Tracker</div>
+          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Private Enclave</div>
+        </div>
+      </div>
 
       {/* ==================== FLOATING PILL NAV ==================== */}
       <div className="pt-nav-wrapper">
@@ -159,6 +267,17 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               <span>Get Started</span>
               <ArrowUpRight size={13} />
             </button>
+
+            {/* Menu Trigger Button */}
+            <button
+              type="button"
+              className="pt-nav-pill-btn"
+              style={{ padding: "8px 12px" }}
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open Navigation Menu"
+            >
+              <Menu size={16} />
+            </button>
           </div>
         </header>
       </div>
@@ -167,36 +286,40 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
         {/* ==================== HERO SECTION WITH 3D SPATIAL SCROLL ==================== */}
         <main>
           <section ref={heroRef} className="pt-hero">
-            <div className="pt-hero-headline-wrap">
-              <div className="pt-hero-tag">
+            <div ref={heroTextRef} className="pt-hero-headline-wrap">
+              <div className="pt-hero-tag hero-anim-sub">
                 <span>Personal Finance AI Tracker</span>
               </div>
 
               <h1 className="pt-hero-title">
-                Your money,<br />
-                <span className="highlight-yellow">understood.</span>
+                <span className="pt-line-mask">
+                  <span className="hero-stagger-word">Your money,</span>
+                </span>
+                <span className="pt-line-mask">
+                  <span className="hero-stagger-word highlight-yellow">understood.</span>
+                </span>
               </h1>
 
-              <p className="pt-hero-subtitle">
+              <p className="pt-hero-subtitle hero-anim-sub">
                 Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
               </p>
 
               <div className="pt-hero-actions">
                 <button
                   type="button"
-                  className="pt-btn-hero-main"
+                  className="pt-btn-hero-main hero-anim-action"
                   onClick={onGetStarted}
                 >
                   <span>Get Started Free</span>
                   <ArrowRight size={15} />
                 </button>
-                <a href="#how-it-works" className="pt-btn-hero-secondary">
+                <a href="#how-it-works" className="pt-btn-hero-secondary hero-anim-action">
                   <span>See How It Works</span>
                 </a>
               </div>
             </div>
 
-            {/* Advanced 3D Spatial Scroll Card (Tilts and scales backward in 3D as you scroll) */}
+            {/* Advanced 3D Spatial Scroll Card */}
             <motion.div
               id="how-it-works"
               className="pt-transformer-card-perspective-wrapper"
@@ -265,6 +388,36 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </motion.div>
           </section>
 
+          {/* ==================== INFINITE HORIZONTAL EDITORIAL MARQUEE ==================== */}
+          <div className="pt-marquee-wrap" aria-hidden="true">
+            <div className="pt-marquee-track">
+              <div className="pt-marquee-item">
+                <span>RECONCILE STATEMENTS</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>ASK IN PLAIN ENGLISH</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>ZERO SPREADSHEETS</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>100% PRIVATE ENCLAVE</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>DETERMINISTIC MATH</span>
+                <span className="pt-marquee-dot">✦</span>
+              </div>
+              <div className="pt-marquee-item">
+                <span>RECONCILE STATEMENTS</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>ASK IN PLAIN ENGLISH</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>ZERO SPREADSHEETS</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>100% PRIVATE ENCLAVE</span>
+                <span className="pt-marquee-dot">✦</span>
+                <span>DETERMINISTIC MATH</span>
+                <span className="pt-marquee-dot">✦</span>
+              </div>
+            </div>
+          </div>
+
           {/* ==================== STICKY STACKING CARDS WITH PARALLAX TILT ==================== */}
           <section id="cards" className="pt-stack-section">
             <div className="pt-stack-intro">
@@ -273,7 +426,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
             </div>
 
             <div className="pt-cards-stack-container">
-              {/* Card 01: Yellow (with -1.5deg natural card stack tilt) */}
+              {/* Card 01: Yellow */}
               <motion.div
                 className="pt-sticky-card card-yellow"
                 style={{ rotate: -1.5 }}
@@ -307,7 +460,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                 </div>
               </motion.div>
 
-              {/* Card 02: Purple (with +1.2deg natural card stack tilt) */}
+              {/* Card 02: Purple */}
               <motion.div
                 id="ask-ai"
                 className="pt-sticky-card card-purple"
@@ -334,7 +487,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                 </div>
               </motion.div>
 
-              {/* Card 03: Coral (with -0.8deg natural card stack tilt) */}
+              {/* Card 03: Coral */}
               <motion.div
                 className="pt-sticky-card card-coral"
                 style={{ rotate: -0.8 }}
@@ -364,7 +517,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                 </div>
               </motion.div>
 
-              {/* Card 04: Dark (with 0deg anchor card stack tilt) */}
+              {/* Card 04: Dark */}
               <motion.div
                 className="pt-sticky-card card-dark"
                 style={{ rotate: 0 }}
