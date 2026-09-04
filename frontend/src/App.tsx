@@ -12,7 +12,7 @@ import { TransactionsPage } from "./components/pages/TransactionsPage";
 
 type View = "landing" | "auth" | "app";
 
-const PAGES: Record<Page, () => JSX.Element> = {
+const PAGES: Record<Page, (props: { onNavigate: (page: Page) => void }) => JSX.Element> = {
   dashboard: DashboardPage,
   transactions: TransactionsPage,
   accounts: AccountsPage,
@@ -56,7 +56,7 @@ export default function App() {
         setView("landing");
       }}
     >
-      <Current />
+      <Current onNavigate={setPage} />
     </Shell>
   );
 }

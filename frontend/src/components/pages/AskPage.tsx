@@ -1,12 +1,15 @@
 import { FormEvent, useState } from "react";
-import { api, NLQueryResult } from "../../api";
+import { api, ApiError, money, NLQueryResult } from "../../api";
 import { IconSpark } from "../../icons";
+import { Page } from "../Shell";
+import { seedSamplePortfolio } from "../../sampleData";
 
 const SUGGESTIONS = [
   "How much did I spend on dining?",
   "What were my top merchants?",
   "How much did I save last month?",
   "What category increased the most?",
+  "Show my transactions over $100",
 ];
 
 const DUMMY_RESPONSES: Record<string, NLQueryResult> = {
@@ -55,9 +58,45 @@ const DUMMY_RESPONSES: Record<string, NLQueryResult> = {
   },
 };
 
-export function AskPage() {
+function hasUsableData(result: NLQueryResult): boolean {
+  if (result.rows.length === 0) return false;
+  return result.rows.some((row) =>
+    row.some((val) => val !== null && val !== undefined && val !== "—" && val !== "")
+  );
+}
+
+function synthesizeSummary(result: NLQueryResult): string {
+  if (!hasUsableData(result)) {
+    return `No matching records found in your database for "${result.question}".`;
+  }
+
+  // Single scalar result (e.g. SUM or COUNT)
+  if (result.rows.length === 1 && result.columns.length === 1) {
+    const val = result.rows[0][0];
+    const col = result.columns[0].replace(/_/g, " ");
+    if (typeof val === "number" || (!isNaN(Number(val)) && val !== "")) {
+      return `Your calculated ${col} is ${money(Number(val))}.`;
+    }
+    return `Calculated ${col}: ${val}`;
+  }
+
+  // Two columns like [merchant, total]
+  if (result.rows.length > 0 && result.columns.length >= 2) {
+    const firstRow = result.rows[0];
+    const entity = firstRow[0];
+    const val = firstRow[1];
+    if (val !== null && val !== undefined) {
+      return `Top result is ${entity} with ${typeof val === "number" ? money(val) : String(val)} across ${result.row_count} matching records.`;
+    }
+  }
+
+  return `Found ${result.row_count} verified record${result.row_count === 1 ? "" : "s"} across your linked accounts.`;
+}
+
+export function AskPage({ onNavigate }: { onNavigate?: (page: Page) => void }) {
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
+  const [seeding, setSeeding] = useState(false);
   const [result, setResult] = useState<NLQueryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSql, setShowSql] = useState(true);
@@ -70,15 +109,9 @@ export function AskPage() {
     try {
       const res = await api.ask(text);
       setResult(res);
-    } catch {
-      // Intelligent fallback to dummy data for immediate testing
-      const lower = text.toLowerCase();
-      let matched = DUMMY_RESPONSES.dining;
-      if (lower.includes("merchant")) matched = DUMMY_RESPONSES.merchants;
-      else if (lower.includes("save") || lower.includes("savings")) matched = DUMMY_RESPONSES.save;
-      else if (lower.includes("category") || lower.includes("increase")) matched = DUMMY_RESPONSES.category;
-
-      setResult({ ...matched, question: text });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : "Query execution failed. Please verify your backend and LLM connection.";
+      setError(msg);
     } finally {
       setBusy(false);
     }
@@ -89,40 +122,51 @@ export function AskPage() {
     if (question.trim()) void ask(question.trim());
   }
 
-  // Synthesize natural language answer summary
-  const answerSummary = result
-    ? result.rows.length === 0
-      ? "No records matched your specific parameters."
-      : result.question.toLowerCase().includes("dining")
-      ? "You spent $542.80 on Dining & Coffee across 14 transactions this month (14% lower than last month)."
-      : result.question.toLowerCase().includes("merchant")
-      ? "Your highest spend vendor was Trader Joe's ($480.20), followed by Delta Air Lines ($382.40)."
-      : result.question.toLowerCase().includes("save")
-      ? "You saved +$1,190.00 in February with a net savings rate of ~22%."
-      : result.question.toLowerCase().includes("category")
-      ? "Travel & Flights increased the most (+31.2%) due to an airline booking."
-      : `Found ${result.row_count} matching record${result.row_count === 1 ? "" : "s"} across your verified accounts.`
-    : null;
+  function loadSampleDemo(presetKey: string) {
+    setError(null);
+    const demo = DUMMY_RESPONSES[presetKey] || DUMMY_RESPONSES.dining;
+    setResult(demo);
+    setQuestion(demo.question);
+  }
+
+  async function handleSeedAndRequery() {
+    setSeeding(true);
+    try {
+      await seedSamplePortfolio();
+      if (question.trim()) {
+        await ask(question.trim());
+      } else {
+        await ask("How much did I spend on dining?");
+      }
+    } catch (err) {
+      setError("Failed to seed sample statements. Please try importing from the Imports portal.");
+    } finally {
+      setSeeding(false);
+    }
+  }
+
+  const isUsable = result ? hasUsableData(result) : false;
+  const answerText = result ? synthesizeSummary(result) : null;
 
   return (
     <div>
       <div className="page-head">
         <div>
-          <span className="editorial-kicker">NATURAL LANGUAGE SQL</span>
+          <span className="editorial-kicker">NATURAL LANGUAGE AI ENGINE</span>
           <h1>Ask your money anything.</h1>
           <p className="editorial-lead" style={{ margin: 0 }}>
-            Financial answers without complicated spreadsheets.
+            Plain English translated to verified, read-only SQL with AST tenant isolation.
           </p>
         </div>
-        <span className="crumb">Verified Abstract Syntax Tree</span>
+        <span className="crumb">Gemini / Claude SQL Synthesis</span>
       </div>
 
       <div style={{ display: "grid", gap: 24 }}>
-        {/* Large Centered Query Console */}
-        <div className="card" style={{ padding: "34px 38px" }}>
+        {/* Large Query Console */}
+        <div className="card" style={{ padding: "32px 36px" }}>
           <form className="ask-box" onSubmit={submit}>
             <input
-              placeholder="How much did I spend on dining out last month?"
+              placeholder="e.g. How much did I spend on dining this month?"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
@@ -132,8 +176,8 @@ export function AskPage() {
           </form>
 
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 18, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-              PRESETS:
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-fog-blue)" }}>
+              PRESET QUESTIONS:
             </span>
             <div className="suggestions">
               {SUGGESTIONS.map((s) => (
@@ -144,41 +188,102 @@ export function AskPage() {
             </div>
           </div>
 
-          {error && <div className="error">{error}</div>}
+          {error && (
+            <div style={{ marginTop: 18 }}>
+              <div className="error" style={{ marginBottom: 10 }}>{error}</div>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 12.5, color: "var(--color-fog-blue)" }}>
+                <span>Want to test the interface without a live LLM key?</span>
+                <button
+                  type="button"
+                  onClick={() => loadSampleDemo("dining")}
+                  style={{
+                    background: "transparent",
+                    border: "1px solid var(--color-ash-border)",
+                    color: "var(--color-bone-white)",
+                    padding: "4px 10px",
+                    borderRadius: "var(--radius-buttons)",
+                    fontSize: 11.5,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✦ View Demo Answer
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Natural Language Prominent Result */}
+        {/* Query Result Card */}
         {result && (
-          <div className="card" style={{ borderLeft: "4px solid var(--yellow-deep)" }}>
+          <div className="card" style={{ borderLeft: "3px solid var(--color-prism-cyan)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <IconSpark size={16} />
-                <span className="editorial-kicker" style={{ margin: 0 }}>ANSWER SUMMARY</span>
+                <span style={{ color: "var(--color-prism-cyan)" }}><IconSpark size={16} /></span>
+                <span className="editorial-kicker" style={{ margin: 0, color: "var(--color-prism-cyan)" }}>
+                  ANSWER SUMMARY
+                </span>
               </div>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--color-fog-blue)" }}>
                 Execution Latency: {result.latency_ms} ms · {result.row_count} row{result.row_count === 1 ? "" : "s"}
               </span>
             </div>
 
             <div
               style={{
-                fontSize: 22,
-                fontWeight: 700,
-                color: "var(--text-primary)",
-                marginBottom: 20,
+                fontSize: 20,
+                fontWeight: 600,
+                color: "var(--color-bone-white)",
+                marginBottom: 18,
                 lineHeight: 1.4,
               }}
             >
-              {answerSummary}
+              {answerText}
             </div>
 
-            {result.rows.length > 0 && (
+            {!isUsable && (
+              <div
+                style={{
+                  background: "var(--color-obsidian)",
+                  border: "1px solid var(--color-ash-border)",
+                  borderRadius: "var(--radius-cards)",
+                  padding: "20px 24px",
+                  marginBottom: 20,
+                }}
+              >
+                <div style={{ fontSize: 14, color: "var(--color-bone-white)", fontWeight: 500, marginBottom: 6 }}>
+                  No transactions recorded for your account yet
+                </div>
+                <div style={{ fontSize: 13, color: "var(--color-fog-blue)", marginBottom: 16 }}>
+                  Ask FinSight translates natural language to SQL queries against your personal database. When your account has no uploaded transactions, queries return 0 rows.
+                </div>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={handleSeedAndRequery}
+                    disabled={seeding}
+                    style={{ fontSize: 12, padding: "8px 16px" }}
+                  >
+                    {seeding ? "Ingesting Sample Statement…" : "✦ Ingest Sample Statement & Re-run"}
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => onNavigate?.("imports")}
+                    style={{ fontSize: 12, padding: "8px 16px" }}
+                  >
+                    Go to Statement Ingestion →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isUsable && result.rows.length > 0 && (
               <div style={{ overflowX: "auto", marginBottom: 20 }}>
                 <table>
                   <thead>
                     <tr>
                       {result.columns.map((col) => (
-                        <th key={col}>{col}</th>
+                        <th key={col}>{col.replace(/_/g, " ").toUpperCase()}</th>
                       ))}
                     </tr>
                   </thead>
@@ -190,7 +295,7 @@ export function AskPage() {
                             key={j}
                             className={typeof value === "number" || /^-?\d/.test(String(value)) ? "num" : ""}
                           >
-                            {value === null ? "—" : String(value)}
+                            {value === null || value === undefined ? "—" : String(value)}
                           </td>
                         ))}
                       </tr>
@@ -200,17 +305,18 @@ export function AskPage() {
               </div>
             )}
 
-            {/* Expandable Generated SQL & Validation Badge Strip */}
-            <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16, marginTop: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            {/* Generated SQL Drawer */}
+            <div style={{ borderTop: "1px solid var(--color-ash-border)", paddingTop: 16, marginTop: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
                 <button
                   type="button"
                   style={{
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border)",
-                    padding: "6px 14px",
-                    borderRadius: 999,
-                    fontSize: 11.5,
+                    background: "transparent",
+                    border: "1px solid var(--color-ash-border)",
+                    color: "var(--color-bone-white)",
+                    padding: "5px 12px",
+                    borderRadius: "var(--radius-buttons)",
+                    fontSize: 11,
                     fontWeight: 600,
                     cursor: "pointer",
                   }}
@@ -220,14 +326,14 @@ export function AskPage() {
                 </button>
 
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 11, background: "var(--mint)", color: "#166534", padding: "2px 8px", borderRadius: 4, fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, background: "rgba(42, 255, 42, 0.12)", color: "var(--color-prism-lime)", border: "1px solid rgba(42, 255, 42, 0.3)", padding: "2px 8px", borderRadius: 4, fontWeight: 600 }}>
                     ✓ Validated AST
                   </span>
-                  <span style={{ fontSize: 11, background: "var(--mint)", color: "#166534", padding: "2px 8px", borderRadius: 4, fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, background: "rgba(42, 127, 255, 0.12)", color: "var(--color-prism-cyan)", border: "1px solid rgba(42, 127, 255, 0.3)", padding: "2px 8px", borderRadius: 4, fontWeight: 600 }}>
                     ✓ SELECT Only
                   </span>
-                  <span style={{ fontSize: 11, background: "var(--surface-2)", color: "var(--text-secondary)", padding: "2px 8px", borderRadius: 4, fontWeight: 600 }}>
-                    Row Limit Applied
+                  <span style={{ fontSize: 11, background: "var(--color-obsidian)", color: "var(--color-fog-blue)", border: "1px solid var(--color-ash-border)", padding: "2px 8px", borderRadius: 4, fontWeight: 500 }}>
+                    Tenant Scoped
                   </span>
                 </div>
               </div>
@@ -235,14 +341,14 @@ export function AskPage() {
               {showSql && (
                 <pre
                   style={{
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
+                    background: "var(--color-obsidian)",
+                    border: "1px solid var(--color-ash-border)",
+                    borderRadius: "var(--radius-cards)",
                     padding: 16,
                     fontFamily: "var(--font-mono)",
                     fontSize: 12.5,
                     lineHeight: 1.6,
-                    color: "var(--text-primary)",
+                    color: "var(--color-bone-white)",
                     overflowX: "auto",
                     margin: 0,
                   }}

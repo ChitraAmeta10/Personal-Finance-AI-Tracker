@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Account, api, Category, money, Transaction } from "../../api";
 import { IconSpark } from "../../icons";
+import { Page } from "../Shell";
 
-export function TransactionsPage() {
+export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } = {}) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

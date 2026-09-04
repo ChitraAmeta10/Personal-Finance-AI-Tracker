@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from app.core.deps import get_current_user, require_role
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db
-from app.models import User, UserRole
-from app.schemas.auth import Token, UserCreate, UserRead
+from app.models import Account, User, UserRole
+from app.models.enums import AccountType
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -19,6 +19,9 @@ def register(payload: UserCreate, db: Session = Depends(get_db)) -> User:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
     user = User(email=payload.email, hashed_password=hash_password(payload.password))
     db.add(user)
+    db.flush()
+    default_acct = Account(user_id=user.id, name="Primary Checking", account_type=AccountType.CHECKING, currency="USD")
+    db.add(default_acct)
     db.commit()
     db.refresh(user)
     return user

@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { api, ApiError } from "../api";
-import { LogoMark } from "../icons";
+import { ArrowLeft } from "lucide-react";
 
 interface Props {
   initialMode?: "login" | "register";
@@ -21,26 +21,22 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const enterAsGuest = () => {
-    localStorage.setItem("email", "alexandra@finsight.local");
-    localStorage.setItem("token", "demo-token");
-    onLogin();
-  };
-
   async function submit(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
     try {
-      if (mode === "register") await api.register(email, password);
+      if (mode === "register") {
+        await api.register(email, password);
+      }
       await api.login(email, password);
       onLogin();
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Backend connection offline. You can click 'Instant Demo Access' below to explore immediately."
-      );
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("Unable to connect to FinSight backend. Please ensure the server is active.");
+      }
     } finally {
       setBusy(false);
     }
@@ -51,9 +47,7 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
       {/* Left Obsidian Pitch Side */}
       <aside className="auth-side">
         <div className="brand-row">
-          <span className="logo-mark">
-            <LogoMark size={16} />
-          </span>
+          <span className="vivid-prism-pip" aria-hidden="true" />
           <span className="name">
             Fin<em>Sight</em>
           </span>
@@ -87,6 +81,17 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
       {/* Right Minimal Form */}
       <div className="auth-form-side">
         <form className="auth-card" onSubmit={submit}>
+          {onBack && (
+            <button
+              type="button"
+              className="auth-back-link"
+              onClick={onBack}
+            >
+              <ArrowLeft size={14} />
+              <span>Back to Overview</span>
+            </button>
+          )}
+
           <span className="editorial-kicker">
             {mode === "login" ? "Security Portal" : "Join FinSight"}
           </span>
@@ -126,61 +131,10 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
             <button
               type="submit"
               disabled={busy}
-              style={{
-                background: "var(--color-espresso-ink)",
-                color: "#ffffff",
-                padding: "14px",
-                borderRadius: "200px",
-                border: "none",
-                fontWeight: 600,
-                fontSize: "14px",
-                cursor: "pointer",
-              }}
+              className="auth-submit-btn"
             >
-              {busy ? "Signing in…" : mode === "login" ? "Sign In" : "Create Account"}
+              {busy ? "Authenticating…" : mode === "login" ? "Sign In" : "Create Account"}
             </button>
-
-            {/* Instant Demo Access Button */}
-            <button
-              type="button"
-              onClick={enterAsGuest}
-              style={{
-                background: "transparent",
-                border: "1px solid var(--color-espresso-ink)",
-                color: "var(--color-espresso-ink)",
-                padding: "12px",
-                borderRadius: "200px",
-                fontSize: "13px",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                transition: "all 0.2s ease",
-              }}
-            >
-              <span>✦ Instant Demo Access (No Password)</span>
-            </button>
-
-            {onBack && (
-              <button
-                type="button"
-                className="secondary"
-                onClick={onBack}
-                style={{
-                  background: "transparent",
-                  border: "1px solid var(--color-bone)",
-                  color: "var(--color-taupe-slate)",
-                  padding: "12px",
-                  borderRadius: "200px",
-                  fontSize: "13px",
-                  cursor: "pointer",
-                }}
-              >
-                Return to Overview
-              </button>
-            )}
           </div>
 
           <div className="auth-switch">

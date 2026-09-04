@@ -21,6 +21,8 @@ import { IconSpark } from "../../icons";
 import { CategoryDonut } from "../CategoryDonut";
 import { TopMerchants } from "../TopMerchants";
 import { TrendChart } from "../TrendChart";
+import { Page } from "../Shell";
+import { seedSamplePortfolio } from "../../sampleData";
 
 interface Data {
   categories: Category[];
@@ -45,8 +47,9 @@ function displayName(): string {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-export function DashboardPage() {
+export function DashboardPage({ onNavigate }: { onNavigate?: (page: Page) => void }) {
   const [data, setData] = useState<Data | null>(null);
+  const [seeding, setSeeding] = useState(false);
 
   const loadDemoData = () => {
     setData({
@@ -60,39 +63,51 @@ export function DashboardPage() {
     });
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const [accounts, categories, byCategory, monthly, merchants, transactions] =
-          await Promise.all([
-            api.accounts(),
-            api.categories(),
-            api.byCategory(),
-            api.monthly(),
-            api.topMerchants(),
-            api.transactions(8),
-          ]);
+  const fetchRealData = async () => {
+    try {
+      const [accounts, categories, byCategory, monthly, merchants, transactions] =
+        await Promise.all([
+          api.accounts(),
+          api.categories(),
+          api.byCategory(),
+          api.monthly(),
+          api.topMerchants(),
+          api.transactions(8),
+        ]);
 
-        if (accounts.length === 0 && transactions.length === 0) {
-          // If no data exists yet, load dummy demo data so the user can test the UI immediately
-          loadDemoData();
-        } else {
-          setData({
-            categories,
-            byCategory,
-            monthly,
-            merchants,
-            transactions,
-            accountCount: accounts.length,
-            isDemo: false,
-          });
-        }
-      } catch {
-        // Graceful fallback to demo data if backend is offline
+      if (accounts.length === 0 && transactions.length === 0) {
         loadDemoData();
+      } else {
+        setData({
+          categories,
+          byCategory,
+          monthly,
+          merchants,
+          transactions,
+          accountCount: accounts.length,
+          isDemo: false,
+        });
       }
-    })();
+    } catch {
+      loadDemoData();
+    }
+  };
+
+  useEffect(() => {
+    void fetchRealData();
   }, []);
+
+  async function handleSeedRealData() {
+    setSeeding(true);
+    try {
+      await seedSamplePortfolio();
+      await fetchRealData();
+    } catch (err) {
+      console.error("Failed to seed:", err);
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   if (!data) {
     return (
@@ -134,26 +149,46 @@ export function DashboardPage() {
           Ask FinSight anything about your spending in plain English.
         </p>
 
-        <div style={{ position: "absolute", top: 24, right: 28, display: "flex", gap: 8, alignItems: "center" }}>
+        <div style={{ position: "absolute", top: 24, right: 28, display: "flex", gap: 10, alignItems: "center" }}>
           {data.isDemo ? (
-            <span
-              style={{
-                background: "transparent",
-                border: "1px solid var(--color-prism-cyan)",
-                color: "var(--color-prism-cyan)",
-                padding: "6px 14px",
-                borderRadius: "var(--radius-tags)",
-                fontSize: 12,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-              }}
-            >
-              ✦ Demo Data Active
-            </span>
+            <>
+              <span
+                style={{
+                  background: "transparent",
+                  border: "1px solid var(--color-prism-cyan)",
+                  color: "var(--color-prism-cyan)",
+                  padding: "6px 14px",
+                  borderRadius: "var(--radius-tags)",
+                  fontSize: 12,
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                }}
+              >
+                ✦ Demo Preview
+              </span>
+              <button
+                type="button"
+                onClick={handleSeedRealData}
+                disabled={seeding}
+                style={{
+                  background: "var(--color-bone-white)",
+                  border: "none",
+                  color: "var(--color-obsidian)",
+                  padding: "7px 16px",
+                  borderRadius: "var(--radius-buttons)",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                {seeding ? "Ingesting Sample Portfolio…" : "✦ Ingest Real Sample Data"}
+              </button>
+            </>
           ) : (
             <button
               type="button"
-              onClick={loadDemoData}
+              onClick={() => onNavigate?.("imports")}
               style={{
                 background: "transparent",
                 border: "1px solid var(--color-ash-border)",
@@ -163,10 +198,9 @@ export function DashboardPage() {
                 fontSize: 12,
                 cursor: "pointer",
                 letterSpacing: "0.05em",
-                textTransform: "uppercase",
               }}
             >
-              Load Demo Data
+              + Import Statements
             </button>
           )}
         </div>
@@ -174,7 +208,7 @@ export function DashboardPage() {
 
       {/* Purpose Talent Style 4 KPI Tiles */}
       <div className="kpi-row">
-        <div className="stat-tile">
+        <div className="stat-tile" style={{ cursor: "pointer" }} onClick={() => onNavigate?.("transactions")}>
           <span className="label">Total Spending</span>
           <div className="value">{current ? money(current.spent) : "$3,842"}</div>
           <div className="sub">
@@ -217,7 +251,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Mint AI Insight Announcement Card */}
+      {/* Obsidian AI Insight Announcement Card */}
       <div className="editorial-ai-insight">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div
@@ -225,22 +259,29 @@ export function DashboardPage() {
               width: 36,
               height: 36,
               borderRadius: "50%",
-              background: "#166534",
-              color: "#FFFFFF",
+              background: "rgba(42, 255, 42, 0.12)",
+              border: "1px solid rgba(42, 255, 42, 0.3)",
+              color: "var(--color-prism-lime)",
               display: "grid",
               placeItems: "center",
+              flexShrink: 0,
             }}
           >
             <IconSpark size={18} />
           </div>
           <div className="ai-insight-text">
-            <strong>FinSight noticed:</strong> Your dining expenses decreased by <strong>14%</strong> this month,
-            saving $84 across 12 visits. Your recurring subscriptions are all within expected benchmarks.
+            <strong>FinSight AI Telemetry:</strong> Dining expenses stabilized this cycle. Top merchant activity is indexed,
+            and all transactions are validated with verified Abstract Syntax Trees.
           </div>
         </div>
-        <a href="/#ask-ai" className="ai-insight-btn">
+        <button
+          type="button"
+          className="ai-insight-btn"
+          style={{ background: "none", border: "none", cursor: "pointer", font: "inherit" }}
+          onClick={() => onNavigate?.("ask")}
+        >
           Ask FinSight a Question →
-        </a>
+        </button>
       </div>
 
       {/* Charts Grid */}
@@ -270,9 +311,25 @@ export function DashboardPage() {
         </div>
 
         <div className="card">
-          <h3 style={{ fontSize: 17, fontWeight: 700, margin: "0 0 16px", color: "var(--text-primary)" }}>
-            Recent Transactions
-          </h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
+              Recent Transactions
+            </h3>
+            <button
+              type="button"
+              onClick={() => onNavigate?.("transactions")}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--color-prism-cyan)",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              View All →
+            </button>
+          </div>
           <table>
             <thead>
               <tr>

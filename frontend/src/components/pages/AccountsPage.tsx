@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Account, api, ApiError } from "../../api";
 import { IconWallet } from "../../icons";
+import { Page } from "../Shell";
 
 const TYPES = [
   { value: "checking", label: "Checking Account" },
@@ -9,11 +10,12 @@ const TYPES = [
   { value: "cash", label: "Operational Reserve / Cash" },
 ];
 
-export function AccountsPage() {
+export function AccountsPage({ onNavigate }: { onNavigate?: (page: Page) => void }) {
   const [accounts, setAccounts] = useState<Account[] | null>(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("checking");
   const [busy, setBusy] = useState(false);
+  const [quickSeeding, setQuickSeeding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -36,6 +38,20 @@ export function AccountsPage() {
     }
   }
 
+  async function createStarterAccounts() {
+    setQuickSeeding(true);
+    setError(null);
+    try {
+      await api.createAccount("Chase Sapphire Checking", "checking");
+      await api.createAccount("Amex Platinum Card", "credit_card");
+      refresh();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to create starter accounts");
+    } finally {
+      setQuickSeeding(false);
+    }
+  }
+
   return (
     <div>
       <div className="page-head">
@@ -46,19 +62,21 @@ export function AccountsPage() {
             Every account is cryptographic, tenant-isolated, and partitioned.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAddForm(!showAddForm)}
-          style={{ whiteSpace: "nowrap" }}
-        >
-          {showAddForm ? "Close Form" : "+ Add Account"}
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            type="button"
+            onClick={() => setShowAddForm(!showAddForm)}
+            style={{ whiteSpace: "nowrap" }}
+          >
+            {showAddForm ? "Close Form" : "+ Add Account"}
+          </button>
+        </div>
       </div>
 
       {showAddForm && (
         <div className="card" style={{ marginBottom: 24, maxWidth: 640 }}>
           <span className="editorial-kicker">ACCOUNT SETUP</span>
-          <h2>Register New Capital Container</h2>
+          <h2 style={{ fontSize: 20, marginBottom: 16 }}>Register New Capital Container</h2>
           <form onSubmit={create}>
             <label htmlFor="acct-name">Account Label</label>
             <input
@@ -69,7 +87,7 @@ export function AccountsPage() {
               onChange={(e) => setName(e.target.value)}
             />
 
-            <label htmlFor="acct-type">Account Type</label>
+            <label htmlFor="acct-type" style={{ marginTop: 14 }}>Account Type</label>
             <select id="acct-type" value={type} onChange={(e) => setType(e.target.value)}>
               {TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -78,7 +96,7 @@ export function AccountsPage() {
               ))}
             </select>
 
-            <div className="form-actions">
+            <div className="form-actions" style={{ marginTop: 20 }}>
               <button type="submit" disabled={busy || !name.trim()}>
                 {busy ? "Registering…" : "Register Account"}
               </button>
@@ -95,8 +113,55 @@ export function AccountsPage() {
       {accounts === null ? (
         <div className="card empty">Loading verified accounts…</div>
       ) : accounts.length === 0 ? (
-        <div className="card empty">
-          No accounts registered yet. Click &ldquo;+ Add Account&rdquo; to begin.
+        <div className="card" style={{ textAlign: "center", padding: "48px 24px" }}>
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: "50%",
+              background: "rgba(42, 127, 255, 0.1)",
+              border: "1px solid rgba(42, 127, 255, 0.3)",
+              display: "grid",
+              placeItems: "center",
+              margin: "0 auto 16px",
+              color: "var(--color-prism-cyan)",
+            }}
+          >
+            <IconWallet size={24} />
+          </div>
+          <h3 style={{ fontSize: 20, fontWeight: 500, color: "var(--color-bone-white)", marginBottom: 8 }}>
+            No Registered Accounts Yet
+          </h3>
+          <p style={{ color: "var(--color-fog-blue)", maxWidth: 460, margin: "0 auto 24px", fontSize: 14 }}>
+            Accounts represent your depository checking, savings, or credit cards. Create your first account manually or click below to generate starter accounts.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={createStarterAccounts}
+              disabled={quickSeeding}
+              style={{
+                background: "var(--color-bone-white)",
+                color: "var(--color-obsidian)",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "var(--radius-buttons)",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {quickSeeding ? "Generating Accounts…" : "✦ Generate Starter Accounts"}
+            </button>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => setShowAddForm(true)}
+              style={{ padding: "10px 20px" }}
+            >
+              + Add Custom Account
+            </button>
+          </div>
+          {error && <div className="error" style={{ maxWidth: 460, margin: "16px auto 0" }}>{error}</div>}
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -108,7 +173,7 @@ export function AccountsPage() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: "24px 30px",
+                padding: "22px 28px",
                 flexWrap: "wrap",
                 gap: 20,
               }}
@@ -119,11 +184,11 @@ export function AccountsPage() {
                     width: 44,
                     height: 44,
                     borderRadius: 10,
-                    background: "var(--brand-wash)",
-                    border: "1px solid var(--brand-border)",
+                    background: "rgba(42, 127, 255, 0.1)",
+                    border: "1px solid rgba(42, 127, 255, 0.25)",
                     display: "grid",
                     placeItems: "center",
-                    color: "var(--brand)",
+                    color: "var(--color-prism-cyan)",
                     flexShrink: 0,
                   }}
                 >
@@ -133,21 +198,21 @@ export function AccountsPage() {
                 <div>
                   <h3
                     style={{
-                      fontFamily: "var(--font-serif)",
-                      fontSize: 22,
-                      fontWeight: 400,
-                      color: "var(--text-primary)",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 18,
+                      fontWeight: 500,
+                      color: "var(--color-bone-white)",
                       marginBottom: 4,
                     }}
                   >
                     {account.name}
                   </h3>
-                  <div style={{ display: "flex", gap: 12, fontSize: 12.5, color: "var(--text-secondary)" }}>
+                  <div style={{ display: "flex", gap: 12, fontSize: 12.5, color: "var(--color-fog-blue)" }}>
                     <span style={{ textTransform: "capitalize" }}>
                       {account.account_type.replace("_", " ")}
                     </span>
                     <span>·</span>
-                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--gold)" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--color-prism-cyan)" }}>
                       {account.currency}
                     </span>
                     <span>·</span>
@@ -160,21 +225,15 @@ export function AccountsPage() {
                 <button
                   type="button"
                   className="secondary"
-                  style={{ fontSize: 11, padding: "8px 16px" }}
-                  onClick={() => {
-                    const txnNav = document.querySelector('button[title*="Transactions"]') as HTMLElement;
-                    if (txnNav) txnNav.click();
-                  }}
+                  style={{ fontSize: 12, padding: "8px 16px" }}
+                  onClick={() => onNavigate?.("transactions")}
                 >
                   View Activity
                 </button>
                 <button
                   type="button"
-                  style={{ fontSize: 11, padding: "8px 16px" }}
-                  onClick={() => {
-                    const importNav = document.querySelector('button[title*="Imports"]') as HTMLElement;
-                    if (importNav) importNav.click();
-                  }}
+                  style={{ fontSize: 12, padding: "8px 16px" }}
+                  onClick={() => onNavigate?.("imports")}
                 >
                   Import CSV
                 </button>

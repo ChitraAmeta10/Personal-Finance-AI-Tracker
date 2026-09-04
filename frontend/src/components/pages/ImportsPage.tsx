@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Account, api, ImportBatch } from "../../api";
 import { UploadPanel } from "../UploadPanel";
+import { Page } from "../Shell";
 
-export function ImportsPage() {
+export function ImportsPage({ onNavigate }: { onNavigate?: (page: Page) => void }) {
   const [accounts, setAccounts] = useState<Account[] | null>(null);
   const [batches, setBatches] = useState<ImportBatch[]>([]);
 
@@ -32,7 +33,7 @@ export function ImportsPage() {
           {accounts === null ? (
             <div className="empty">Loading accounts…</div>
           ) : (
-            <UploadPanel accounts={accounts} onDataChanged={refresh} />
+            <UploadPanel accounts={accounts} onDataChanged={refresh} onNavigate={onNavigate} />
           )}
         </div>
 
@@ -40,7 +41,7 @@ export function ImportsPage() {
           <span className="editorial-kicker">AUDIT LEDGER</span>
           <h2>Import History</h2>
           {batches.length === 0 ? (
-            <div className="empty">No past statements on record.</div>
+            <div className="empty">No past statements on record. Ingest a CSV to see audit records.</div>
           ) : (
             <table>
               <thead>
@@ -73,7 +74,7 @@ export function ImportsPage() {
                     <td className="num">
                       {batch.imported_rows}/{batch.total_rows}
                     </td>
-                    <td className="num" style={{ color: "var(--gold)" }}>
+                    <td className="num" style={{ color: "var(--color-fog-blue)" }}>
                       {batch.duplicate_rows}
                     </td>
                   </tr>

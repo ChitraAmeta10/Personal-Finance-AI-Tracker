@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { api, MethodStats } from "../../api";
 
+import { Page } from "../Shell";
+
 const SOURCE_META: Record<string, { label: string; color: string }> = {
-  rule: { label: "Deterministic Rules", color: "var(--brand)" },
-  llm: { label: "Claude 3.5 Sonnet", color: "var(--gold)" },
+  rule: { label: "Deterministic Rules", color: "var(--color-prism-cyan)" },
+  llm: { label: "Gemini / Claude AI", color: "var(--color-prism-lime)" },
   manual: { label: "Manual User Override", color: "var(--series-5)" },
   uncategorized: { label: "Uncategorized", color: "var(--other)" },
 };
 
-export function AccuracyPage() {
+export function AccuracyPage(_props: { onNavigate?: (page: Page) => void } = {}) {
   const [stats, setStats] = useState<MethodStats | null>(null);
 
   useEffect(() => {
