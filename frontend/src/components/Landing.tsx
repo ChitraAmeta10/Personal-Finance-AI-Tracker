@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
-import { motion, useScroll, useSpring } from "framer-motion";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import "./landing/landing.css";
@@ -31,7 +30,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
@@ -48,10 +47,6 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       lenis.destroy();
     };
   }, []);
-
-  // Minimal scroll progress bar
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   // Interactive Statement Transformer sample
   const [activeSample, setActiveSample] = useState<"coffee" | "airline" | "software">("coffee");
@@ -87,10 +82,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
   return (
     <div className="pt-layout">
-      {/* Precision Scroll Progress Bar */}
-      <motion.div className="pt-scroll-progress-bar" style={{ scaleX }} />
-
-      {/* ==================== NAVIGATION ==================== */}
+      {/* ==================== TOP NAVIGATION BAR (Full-Bleed Espresso Ink #1a0000) ==================== */}
       <div className="pt-nav-wrapper">
         <header className="pt-nav-bar">
           <div className="pt-nav-left">
@@ -124,7 +116,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
             <button
               type="button"
-              className="pt-btn-outlined-cta"
+              className="pt-btn-nav-cta"
               onClick={onGetStarted}
             >
               <span>Get Started</span>
@@ -134,51 +126,46 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
         </header>
       </div>
 
-      <div className="pt-container">
-        {/* ==================== HERO SECTION ==================== */}
-        <main>
-          <section className="pt-hero">
+      {/* ==================== HERO SECTION (Full-Bleed Prismatic Spectrum Gradient) ==================== */}
+      <main>
+        <section className="pt-hero-gradient-wrap">
+          <div className="pt-hero-content">
             <div className="pt-hero-eyebrow">
               Autonomous Intelligence · Multi-Currency Ledgers
             </div>
 
-            {/* Display Headline at 105–136px, Weight 400, Line Height 1.00, Tight Tracking */}
             <h1 className="pt-hero-display-title">
-              MONEY,
+              Your money,
               <br />
-              MADE VISIBLE.
+              understood.
             </h1>
 
-            {/* Subtitle Left-Aligned beneath the prism artifact, max-width 440px */}
             <p className="pt-hero-subtitle">
-              Drop your bank statements. FinSight refracts chaotic raw transactions into crystal-clear insights with zero spreadsheet debt.
+              Drop your bank statements. FinSight turns messy transactions into crystal clear insights with zero spreadsheet headaches.
             </p>
 
             <div className="pt-hero-actions">
               <button
                 type="button"
-                className="pt-btn-outlined-cta"
-                style={{ padding: "14px 28px", fontSize: "14px" }}
+                className="pt-btn-hero-primary"
                 onClick={onGetStarted}
               >
                 <span>Get Started Free</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={15} />
               </button>
-              <a
-                href="#statements"
-                className="pt-nav-ghost-btn"
-                style={{ fontSize: "14px", padding: "14px 0" }}
-              >
-                See How It Works →
+              <a href="#statements" className="pt-btn-hero-secondary">
+                <span>See How It Works</span>
               </a>
             </div>
+          </div>
+        </section>
 
-            {/* ==================== CHROMATIC PRISM HERO ARTIFACT ==================== */}
-            <div id="statements" className="pt-prism-artifact-container">
-              <div className="pt-prism-caustics-glow" />
-
+        {/* ==================== PRODUCT SHOWCASE & STATEMENT TRANSFORMER ==================== */}
+        <section id="statements" className="pt-showcase-section">
+          <div className="pt-container">
+            <div className="pt-showcase-card">
               <div className="transformer-header">
-                <span className="transformer-label">Chromatic Statement Refraction</span>
+                <span className="transformer-label">Instant Statement Ingestion</span>
                 <div className="statement-tabs-row">
                   <button
                     type="button"
@@ -207,20 +194,18 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               <div className="transformer-grid">
                 {/* Raw Input String */}
                 <div className="raw-statement-box">
-                  <div className="raw-header">Raw Ledger String</div>
+                  <div className="raw-header">Messy Bank Export</div>
                   <div className="raw-text">{currentSample.raw}</div>
                 </div>
 
-                {/* Chromatic Prism Caustic Glyph */}
-                <div className="transformer-prism-cube">
-                  <div className="prism-cube-core" />
-                </div>
+                {/* Arrow */}
+                <div className="transformer-arrow">→</div>
 
                 {/* Refracted Output Card */}
                 <div className="cleaned-card-box">
                   <div className="cleaned-header">
                     <span className="cleaned-cat-badge">
-                      <Sparkles size={13} />
+                      <Sparkles size={12} />
                       <span>{currentSample.category}</span>
                     </span>
                     <span className="cleaned-amount">{currentSample.amount}</span>
@@ -232,43 +217,45 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ==================== INFINITE MARQUEE ==================== */}
-          <div className="pt-marquee-wrap" aria-hidden="true">
-            <div className="pt-marquee-track">
-              <div className="pt-marquee-item">
-                <span>RECONCILE STATEMENTS</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>ASK IN PLAIN ENGLISH</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>ZERO SPREADSHEETS</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>100% PRIVATE ENCLAVE</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>DETERMINISTIC MATH</span>
-                <span className="pt-marquee-dot">✦</span>
-              </div>
-              <div className="pt-marquee-item">
-                <span>RECONCILE STATEMENTS</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>ASK IN PLAIN ENGLISH</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>ZERO SPREADSHEETS</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>100% PRIVATE ENCLAVE</span>
-                <span className="pt-marquee-dot">✦</span>
-                <span>DETERMINISTIC MATH</span>
-                <span className="pt-marquee-dot">✦</span>
-              </div>
+        {/* ==================== INFINITE MARQUEE ==================== */}
+        <div className="pt-marquee-wrap" aria-hidden="true">
+          <div className="pt-marquee-track">
+            <div className="pt-marquee-item">
+              <span>RECONCILE STATEMENTS</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>ASK IN PLAIN ENGLISH</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>ZERO SPREADSHEETS</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>100% PRIVATE ENCLAVE</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>DETERMINISTIC MATH</span>
+              <span className="pt-marquee-dot">✦</span>
+            </div>
+            <div className="pt-marquee-item">
+              <span>RECONCILE STATEMENTS</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>ASK IN PLAIN ENGLISH</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>ZERO SPREADSHEETS</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>100% PRIVATE ENCLAVE</span>
+              <span className="pt-marquee-dot">✦</span>
+              <span>DETERMINISTIC MATH</span>
+              <span className="pt-marquee-dot">✦</span>
             </div>
           </div>
+        </div>
 
-          {/* ==================== EDITORIAL CONTENT BANDS ==================== */}
-          <section id="intelligence" className="pt-editorial-section">
-            <div className="section-eyebrow">Taxonomy & Architecture</div>
+        {/* ==================== 3-COLUMN FEATURE PILLARS ==================== */}
+        <section id="intelligence" className="pt-feature-section">
+          <div className="pt-container">
+            <div className="section-eyebrow">Product Pillars</div>
             <h2 className="section-heading-sm">
-              Deterministic categorization on verified ledgers.
+              How FinSight organizes your life.
             </h2>
 
             <div className="editorial-cards-grid">
@@ -287,7 +274,7 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                   <div className="card-step-num">02 / NATURAL SQL</div>
                   <h3 className="card-title">Ask in Plain English</h3>
                   <p className="card-desc">
-                    Query your personal finances with conversational questions. Verified Abstract Syntax Trees guarantee SELECT-only deterministic math.
+                    No formulas, no pivot tables. Ask natural questions like <em>"How much did I spend on dining out last month?"</em> and get clear, verified answers backed by math.
                   </p>
                 </div>
               </div>
@@ -297,15 +284,17 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
                   <div className="card-step-num">03 / PRIVATE ENCLAVE</div>
                   <h3 className="card-title">100% Tenant Isolated</h3>
                   <p className="card-desc">
-                    Your financial records belong exclusively to you. No behavioral tracking, zero third-party ads, and no selling your data to credit brokers.
+                    Your financial records belong exclusively to you. No behavioral tracking, zero third-party ads, and no selling your data to credit card brokers.
                   </p>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ==================== CLOSING CTA ==================== */}
-          <section className="pt-cta-section">
+        {/* ==================== CLOSING CTA ==================== */}
+        <section className="pt-cta-section">
+          <div className="pt-container">
             <div className="pt-cta-box">
               <h2 className="pt-cta-title">See your money clearly.</h2>
               <p className="pt-cta-sub">
@@ -313,23 +302,24 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
               </p>
               <button
                 type="button"
-                className="pt-btn-outlined-cta"
-                style={{ padding: "14px 28px", fontSize: "14px" }}
+                className="pt-btn-hero-primary"
                 onClick={onGetStarted}
               >
                 <span>Get Started Free</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={15} />
               </button>
             </div>
-          </section>
-        </main>
+          </div>
+        </section>
+      </main>
 
-        {/* ==================== FOOTER ==================== */}
-        <footer className="pt-footer">
+      {/* ==================== FOOTER ==================== */}
+      <footer className="pt-footer">
+        <div className="pt-container" style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
           <div>FinSight · Personal Finance AI Tracker</div>
-          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Obsidian Enclave</div>
-        </footer>
-      </div>
+          <div>{currentTime ? `Local Time: ${currentTime}` : "Live Sync"} · Fluz Style Direction</div>
+        </div>
+      </footer>
     </div>
   );
 }

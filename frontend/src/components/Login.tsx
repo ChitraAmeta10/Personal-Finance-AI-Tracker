@@ -123,7 +123,20 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
           {error && <div className="error">{error}</div>}
 
           <div className="form-actions">
-            <button type="submit" disabled={busy}>
+            <button
+              type="submit"
+              disabled={busy}
+              style={{
+                background: "var(--color-espresso-ink)",
+                color: "#ffffff",
+                padding: "14px",
+                borderRadius: "200px",
+                border: "none",
+                fontWeight: 600,
+                fontSize: "14px",
+                cursor: "pointer",
+              }}
+            >
               {busy ? "Signing in…" : mode === "login" ? "Sign In" : "Create Account"}
             </button>
 
@@ -133,27 +146,38 @@ export function Login({ initialMode = "login", onLogin, onBack }: Props) {
               onClick={enterAsGuest}
               style={{
                 background: "transparent",
-                border: "1px solid var(--color-prism-cyan)",
-                color: "var(--color-prism-cyan)",
+                border: "1px solid var(--color-espresso-ink)",
+                color: "var(--color-espresso-ink)",
                 padding: "12px",
-                borderRadius: "5px",
+                borderRadius: "200px",
                 fontSize: "13px",
-                fontWeight: 400,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
+                fontWeight: 600,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 6,
-                transition: "all 0.3s var(--ease-vivid)",
+                transition: "all 0.2s ease",
               }}
             >
               <span>✦ Instant Demo Access (No Password)</span>
             </button>
 
             {onBack && (
-              <button type="button" className="secondary" onClick={onBack}>
+              <button
+                type="button"
+                className="secondary"
+                onClick={onBack}
+                style={{
+                  background: "transparent",
+                  border: "1px solid var(--color-bone)",
+                  color: "var(--color-taupe-slate)",
+                  padding: "12px",
+                  borderRadius: "200px",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                }}
+              >
                 Return to Overview
               </button>
             )}
