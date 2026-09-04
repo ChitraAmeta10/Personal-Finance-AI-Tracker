@@ -33,6 +33,12 @@
   --font-display: "Oswald", "Impact", -apple-system, sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+
+  /* Motion Philosophy from DESIGN.md:
+     Signature curve cubic-bezier(0.52, 0.01, 0, 1) — optical focus pulling (slow start, decisive stop)
+     Default duration 0.5s. Transform and opacity carry 90% of transitions. Avoid springs/bounces. */
+  --ease-signature: cubic-bezier(0.52, 0.01, 0, 1);
+  --duration-signature: 0.5s;
 }
 
 .pt-layout {
@@ -123,11 +129,11 @@
   cursor: pointer;
   text-decoration: none;
   padding: 6px 0;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--duration-signature) var(--ease-signature);
 }
 
 .pt-nav-ghost-btn:hover {
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .pt-nav-right {
@@ -165,7 +171,7 @@
   color: #ffffff;
   cursor: pointer;
   padding: 6px 12px;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--duration-signature) var(--ease-signature);
 }
 
 .pt-btn-signin:hover {
@@ -185,7 +191,7 @@
   align-items: center;
   gap: 6px;
   border: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity var(--duration-signature) var(--ease-signature), transform var(--duration-signature) var(--ease-signature);
   text-decoration: none;
 }
 
@@ -279,7 +285,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform var(--duration-signature) var(--ease-signature), opacity var(--duration-signature) var(--ease-signature);
   box-shadow: 0 4px 16px rgba(26, 0, 0, 0.2);
 }
 
@@ -300,7 +306,7 @@
   cursor: pointer;
   text-decoration: none;
   backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
+  transition: transform var(--duration-signature) var(--ease-signature), background var(--duration-signature) var(--ease-signature);
 }
 
 .pt-btn-hero-secondary:hover {
@@ -332,6 +338,16 @@
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 16px 48px rgba(26, 0, 0, 0.15);
   background: var(--color-canvas-white);
+  animation: kVfqLU 6.65s var(--ease-signature) infinite;
+}
+
+@keyframes kVfqLU {
+  0%, 100% {
+    box-shadow: 0 16px 48px rgba(26, 0, 0, 0.15), 0 0 20px rgba(166, 180, 247, 0.25);
+  }
+  50% {
+    box-shadow: 0 16px 48px rgba(26, 0, 0, 0.15), 0 0 32px rgba(91, 184, 154, 0.35);
+  }
 }
 
 .pt-hero-visual-image {
@@ -340,7 +356,7 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--duration-signature) var(--ease-signature);
 }
 
 .pt-hero-visual-card:hover .pt-hero-visual-image {
@@ -491,7 +507,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease;
+  transition: transform var(--duration-signature) var(--ease-signature);
 }
 
 .ecosystem-card:hover {
@@ -512,7 +528,7 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform var(--duration-signature) var(--ease-signature);
 }
 
 .ecosystem-card:hover .ecosystem-img {
@@ -631,7 +647,7 @@
   padding: 8px 20px;
   border-radius: 100px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--duration-signature) var(--ease-signature);
 }
 
 .stm-tab.active, .stm-tab:hover {
@@ -831,7 +847,7 @@
   color: var(--color-taupe-slate);
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--duration-signature) var(--ease-signature);
 }
 
 .query-item-btn.active, .query-item-btn:hover {
@@ -1038,7 +1054,7 @@
   padding: 36px 32px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease;
+  transition: transform var(--duration-signature) var(--ease-signature);
 }
 
 .editorial-card:hover {
