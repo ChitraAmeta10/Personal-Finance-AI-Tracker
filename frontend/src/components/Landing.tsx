@@ -14,6 +14,34 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
   const [activeSample, setActiveSample] = useState<"coffee" | "airline" | "software">("coffee");
   const [activeQuery, setActiveQuery] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [scrollY, setScrollY] = useState<number>(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePos({ x, y });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("mousemove", onMouseMove);
+    };
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -89,6 +117,17 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
     },
   ];
 
+  // Outer canvas parallax drift (follows scroll down + responds to cursor tilt)
+  const wrapTransform = `translate3d(calc(-50% + ${mousePos.x * 16}px), calc(-50% + ${scrollY * 0.4}px + ${mousePos.y * 16}px), 0) rotate(${scrollY * 0.03}deg)`;
+
+  // Multi-cuboid dynamic 3D scroll transforms
+  const cube1Transform = `translate3d(0, ${scrollY * 0.18}px, 0) rotate(${scrollY * 0.07}deg)`;
+  const cube2Transform = `translate3d(${scrollY * 0.32}px, ${-scrollY * 0.15}px, 0) rotate(${-scrollY * 0.1}deg)`;
+  const cube3Transform = `translate3d(${-scrollY * 0.36}px, ${scrollY * 0.38}px, 0) rotate(${scrollY * 0.13}deg)`;
+  const cube4Transform = `translate3d(${-scrollY * 0.26}px, ${-scrollY * 0.2}px, 0) rotate(${-scrollY * 0.08}deg)`;
+  const cube5Transform = `translate3d(${scrollY * 0.3}px, ${scrollY * 0.24}px, 0) rotate(${scrollY * 0.1}deg)`;
+  const causticsTransform = `rotate(${scrollY * 0.06}deg) scale(${1 + Math.min(scrollY, 1000) * 0.0005})`;
+
   return (
     <div className="vivid-site-layout">
       {/* Precision Liquid Cursor */}
@@ -159,8 +198,12 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
       <main>
         {/* ==================== HERO VOID & SIGNATURE PRISM ==================== */}
         <section className="vivid-hero-section">
-          {/* Signature 3D Chromatic Dispersion Glass Cubes Artwork */}
-          <div className="vivid-prism-canvas-wrap" aria-hidden="true">
+          {/* Signature 3D Chromatic Dispersion Glass Cubes Artwork with Multi-Layer Parallax */}
+          <div
+            className="vivid-prism-canvas-wrap"
+            aria-hidden="true"
+            style={{ transform: wrapTransform }}
+          >
             <svg
               className="vivid-prism-svg"
               viewBox="0 0 600 600"
@@ -186,27 +229,48 @@ export function Landing({ onGetStarted, onSignIn }: Props) {
 
               {/* Staggered glass cubes with RGB channel dispersion */}
               <g filter="url(#chromaticGlow)">
-                {/* Back dispersion refraction aura */}
-                <ellipse cx="300" cy="300" rx="220" ry="160" fill="url(#prismGrad1)" opacity="0.25" />
+                {/* Back dispersion refraction aura & light beams */}
+                <g className="prism-caustics-layer" style={{ transform: causticsTransform }}>
+                  <ellipse cx="300" cy="300" rx="230" ry="170" fill="url(#prismGrad1)" opacity="0.26" />
+                  <ellipse cx="320" cy="280" rx="180" ry="130" fill="url(#prismGrad2)" opacity="0.2" />
+                  <line x1="90" y1="180" x2="510" y2="440" stroke="#2a7fff" strokeWidth="1.5" strokeOpacity="0.4" strokeDasharray="6 12" />
+                  <line x1="110" y1="170" x2="530" y2="430" stroke="#ff2a2a" strokeWidth="1.5" strokeOpacity="0.4" strokeDasharray="4 8" />
+                </g>
+
+                {/* Cube 4 (Upper Left Floating Satellite Shard) */}
+                <g className="prism-cube-layer prism-cube-4" style={{ transform: cube4Transform }}>
+                  <polygon points="160,130 210,160 160,190 110,160" fill="#12171d" stroke="#fffdf9" strokeWidth="0.4" strokeOpacity="0.6" />
+                  <polygon points="110,160 160,190 160,240 110,210" fill="#090d12" stroke="#2a7fff" strokeWidth="0.8" strokeOpacity="0.8" />
+                  <polygon points="160,190 210,160 210,210 160,240" fill="#0d090b" stroke="#ff2a2a" strokeWidth="0.8" strokeOpacity="0.8" />
+                </g>
+
+                {/* Cube 5 (Upper Right Distant Refraction Shard) */}
+                <g className="prism-cube-layer prism-cube-5" style={{ transform: cube5Transform }}>
+                  <polygon points="480,140 530,170 480,200 430,170" fill="#141a16" stroke="#fffdf9" strokeWidth="0.4" strokeOpacity="0.6" />
+                  <polygon points="430,170 480,200 480,250 430,220" fill="#0b120d" stroke="#2aff2a" strokeWidth="0.8" strokeOpacity="0.8" />
+                  <polygon points="480,200 530,170 530,220 480,250" fill="#090d12" stroke="#2a7fff" strokeWidth="0.8" strokeOpacity="0.8" />
+                </g>
                 
-                {/* Cube 1 (Central Isometric Glass Cube) */}
-                <polygon points="300,160 410,225 300,290 190,225" fill="#181e24" stroke="#fffdf9" strokeWidth="0.75" strokeOpacity="0.8" />
-                <polygon points="190,225 300,290 300,420 190,355" fill="#0c0e12" stroke="#2a7fff" strokeWidth="1.2" strokeOpacity="0.9" />
-                <polygon points="300,290 410,225 410,355 300,420" fill="#120d0f" stroke="#ff2a2a" strokeWidth="1.2" strokeOpacity="0.9" />
+                {/* Cube 1 (Central Major Isometric Glass Cube) */}
+                <g className="prism-cube-layer prism-cube-1" style={{ transform: cube1Transform }}>
+                  <polygon points="300,160 410,225 300,290 190,225" fill="#181e24" stroke="#fffdf9" strokeWidth="0.75" strokeOpacity="0.8" />
+                  <polygon points="190,225 300,290 300,420 190,355" fill="#0c0e12" stroke="#2a7fff" strokeWidth="1.2" strokeOpacity="0.9" />
+                  <polygon points="300,290 410,225 410,355 300,420" fill="#120d0f" stroke="#ff2a2a" strokeWidth="1.2" strokeOpacity="0.9" />
+                </g>
 
-                {/* Cube 2 (Offset floating glass accent) */}
-                <polygon points="420,290 490,330 420,370 350,330" fill="#141920" stroke="#fffdf9" strokeWidth="0.5" strokeOpacity="0.6" />
-                <polygon points="350,330 420,370 420,440 350,400" fill="#0e1410" stroke="#2aff2a" strokeWidth="1" strokeOpacity="0.85" />
-                <polygon points="420,370 490,330 490,400 420,440" fill="#160e10" stroke="#ff2a2a" strokeWidth="1" strokeOpacity="0.85" />
+                {/* Cube 2 (Offset Floating Glass Accent) */}
+                <g className="prism-cube-layer prism-cube-2" style={{ transform: cube2Transform }}>
+                  <polygon points="420,290 490,330 420,370 350,330" fill="#141920" stroke="#fffdf9" strokeWidth="0.5" strokeOpacity="0.6" />
+                  <polygon points="350,330 420,370 420,440 350,400" fill="#0e1410" stroke="#2aff2a" strokeWidth="1" strokeOpacity="0.85" />
+                  <polygon points="420,370 490,330 490,400 420,440" fill="#160e10" stroke="#ff2a2a" strokeWidth="1" strokeOpacity="0.85" />
+                </g>
 
-                {/* Cube 3 (Foreground minimal glass shard) */}
-                <polygon points="210,320 270,355 210,390 150,355" fill="#181e26" stroke="#fffdf9" strokeWidth="0.5" strokeOpacity="0.7" />
-                <polygon points="150,355 210,390 210,455 150,420" fill="#0d1117" stroke="#2a7fff" strokeWidth="1" strokeOpacity="0.9" />
-                <polygon points="210,390 270,355 270,420 210,455" fill="#0c1410" stroke="#2aff2a" strokeWidth="1" strokeOpacity="0.9" />
-
-                {/* Caustics Dispersion Light Beam */}
-                <line x1="120" y1="200" x2="480" y2="440" stroke="#2a7fff" strokeWidth="1.5" strokeOpacity="0.4" strokeDasharray="6 12" />
-                <line x1="130" y1="190" x2="490" y2="430" stroke="#ff2a2a" strokeWidth="1.5" strokeOpacity="0.4" strokeDasharray="4 8" />
+                {/* Cube 3 (Foreground Minimal Glass Shard) */}
+                <g className="prism-cube-layer prism-cube-3" style={{ transform: cube3Transform }}>
+                  <polygon points="210,320 270,355 210,390 150,355" fill="#181e26" stroke="#fffdf9" strokeWidth="0.5" strokeOpacity="0.7" />
+                  <polygon points="150,355 210,390 210,455 150,420" fill="#0d1117" stroke="#2a7fff" strokeWidth="1" strokeOpacity="0.9" />
+                  <polygon points="210,390 270,355 270,420 210,455" fill="#0c1410" stroke="#2aff2a" strokeWidth="1" strokeOpacity="0.9" />
+                </g>
               </g>
             </svg>
           </div>
