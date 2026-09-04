@@ -19,38 +19,31 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
   {
     num: "01",
-    title: "Personal Enclave",
-    sub: "Everyday transaction tracking & automated category budgets",
-    targetId: "#explore",
+    title: "Deterministic Ingestion",
+    sub: "Mathematical normalization of messy bank exports with SHA-256 integrity",
+    targetId: "#ingestion",
     previewImg: "/images/fluz_card_mockup.jpg",
   },
   {
     num: "02",
-    title: "Business & Ledger",
-    sub: "Multi-currency bank feeds with zero-knowledge tenant isolation",
-    targetId: "#explore",
-    previewImg: "/images/fluz_phone_app.jpg",
-  },
-  {
-    num: "03",
-    title: "Statement Refractor",
-    sub: "Deterministic ingestion turning messy bank CSVs into clean records",
-    targetId: "#statements",
-    previewImg: "/images/dashboard-matrix.jpg",
-  },
-  {
-    num: "04",
     title: "Natural SQL Engine",
-    sub: "Query your ledger in conversational English backed by pure math",
+    sub: "Query your multi-currency ledger in conversational English with 0 hallucinations",
     targetId: "#intelligence",
     previewImg: "/images/hologram-tablet.jpg",
   },
   {
-    num: "05",
-    title: "Cryptographic Security",
-    sub: "100% private tenant isolation with zero telemetry monetization",
-    targetId: "#trust",
+    num: "03",
+    title: "Sovereign Enclave",
+    sub: "100% private tenant isolation, AES-256 at rest, and zero ad telemetry",
+    targetId: "#enclave",
     previewImg: "/images/fluz_hero_gems.jpg",
+  },
+  {
+    num: "04",
+    title: "Multi-Currency Matrix",
+    sub: "Real-time spot FX reconciliation across international accounts",
+    targetId: "#enclave",
+    previewImg: "/images/dashboard-matrix.jpg",
   },
 ];
 
