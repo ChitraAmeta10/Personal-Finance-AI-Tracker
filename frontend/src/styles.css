@@ -616,23 +616,284 @@ input:focus, select:focus {
   box-shadow: 0 0 0 1px var(--color-prism-cyan);
 }
 
-/* Filter Bar in Transactions & Tables */
-.filter-row {
+/* Modern Filter Toolbar & Custom Obsidian Dropdowns */
+.filter-toolbar {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
-.filter-row select {
-  width: auto;
-  min-width: 180px;
-  flex: 0 0 auto;
+.search-bar-wrap {
+  position: relative;
+  flex: 1 1 280px;
+  display: flex;
+  align-items: center;
 }
 
-.filter-row input[type="search"] {
-  flex: 1 1 240px;
+.search-bar-wrap .search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--color-fog-blue);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar-wrap input {
+  width: 100%;
+  padding-left: 38px;
+  padding-right: 38px;
+  background: #0d0d0d;
+  border: 1px solid var(--color-ash-border);
+  color: var(--color-bone-white);
+  border-radius: var(--radius-inputs);
+  font-size: 13.5px;
+  height: 42px;
+  transition: all 0.2s var(--ease-signature);
+}
+
+.search-bar-wrap input:focus {
+  border-color: var(--color-prism-cyan);
+  box-shadow: 0 0 0 1px var(--color-prism-cyan);
+  background: #111111;
+}
+
+.search-bar-wrap .clear-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--color-fog-blue);
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.search-bar-wrap .clear-btn:hover {
+  color: var(--color-bone-white);
+  background: rgba(255, 253, 249, 0.1);
+  transform: none;
+}
+
+/* Custom Dropdown Trigger */
+.filter-dropdown-wrap {
+  position: relative;
+}
+
+.filter-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d0d0d;
+  border: 1px solid var(--color-ash-border);
+  color: var(--color-bone-white);
+  padding: 0 14px;
+  height: 42px;
+  border-radius: var(--radius-inputs);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.filter-dropdown-trigger:hover {
+  border-color: #606060;
+  background: #141414;
+  transform: none;
+}
+
+.filter-dropdown-trigger.active {
+  border-color: var(--color-prism-cyan);
+  background: rgba(42, 127, 255, 0.06);
+}
+
+.filter-dropdown-trigger.active.category-active {
+  border-color: var(--color-prism-lime);
+  background: rgba(42, 255, 42, 0.06);
+}
+
+.filter-dropdown-trigger .trigger-icon {
+  color: var(--color-fog-blue);
+  display: flex;
+  align-items: center;
+}
+
+.filter-dropdown-trigger .chevron {
+  color: var(--color-fog-blue);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.filter-dropdown-trigger.open .chevron {
+  transform: rotate(180deg);
+}
+
+.filter-dropdown-trigger .active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-prism-cyan);
+  box-shadow: 0 0 6px var(--color-prism-cyan);
+}
+
+.filter-dropdown-trigger.category-active .active-dot {
+  background: var(--color-prism-lime);
+  box-shadow: 0 0 6px var(--color-prism-lime);
+}
+
+/* Floating Dropdown Popover */
+.dropdown-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 240px;
+  background: #141414;
+  border: 1px solid var(--color-ash-border);
+  border-radius: var(--radius-cards);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 253, 249, 0.05);
+  z-index: 1000;
+  overflow: hidden;
+  padding: 6px 0;
+  animation: dropdownFade 0.15s ease-out;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-popover-header {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fog-blue);
+  padding: 8px 14px 6px;
+}
+
+.dropdown-popover-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 14px;
+  background: transparent;
+  border: none;
+  color: var(--color-bone-white);
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-radius: 0;
+}
+
+.dropdown-option:hover {
+  background: rgba(255, 253, 249, 0.06);
+  transform: none;
+}
+
+.dropdown-option.selected {
+  background: rgba(42, 127, 255, 0.1);
+  color: #fffdf9;
+  font-weight: 500;
+}
+
+.dropdown-option .option-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-option .option-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fog-blue);
+  background: rgba(255, 253, 249, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.dropdown-option .option-check {
+  color: var(--color-prism-cyan);
+  display: flex;
+  align-items: center;
+}
+
+/* Active Filter Chips Strip */
+.active-filter-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.active-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 253, 249, 0.05);
+  border: 1px solid var(--color-ash-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-badges);
+  font-size: 12px;
+  color: var(--color-bone-white);
+}
+
+.active-filter-badge .badge-label {
+  color: var(--color-fog-blue);
+}
+
+.active-filter-badge button {
+  background: transparent;
+  border: none;
+  color: var(--color-fog-blue);
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.active-filter-badge button:hover {
+  color: var(--color-prism-red);
+  transform: none;
+}
+
+.reset-filters-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-fog-blue);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.reset-filters-btn:hover {
+  color: var(--color-bone-white);
+  transform: none;
 }
 
 /* Badges & Status Pills */

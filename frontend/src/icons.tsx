@@ -99,3 +99,34 @@ export const LogoMark = ({ size = 17 }: IconProps) => (
     <path d="M3 20h18" />
   </svg>
 );
+
+export const IconSearch = ({ size = 16 }: IconProps) => (
+  <svg {...base(size)}>
+    <circle cx="11" cy="11" r="8" />
+    <path d="M21 21l-4.35-4.35" />
+  </svg>
+);
+
+export const IconChevronDown = ({ size = 14 }: IconProps) => (
+  <svg {...base(size)} strokeWidth={2}>
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+export const IconX = ({ size = 14 }: IconProps) => (
+  <svg {...base(size)} strokeWidth={2}>
+    <path d="M18 6L6 18M6 6l12 12" />
+  </svg>
+);
+
+export const IconFilter = ({ size = 16 }: IconProps) => (
+  <svg {...base(size)}>
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
+export const IconCheck = ({ size = 14 }: IconProps) => (
+  <svg {...base(size)} strokeWidth={2.5}>
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);

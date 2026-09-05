@@ -1,6 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Account, api, Category, money, Transaction } from "../../api";
-import { IconSpark } from "../../icons";
+import {
+  IconCheck,
+  IconChevronDown,
+  IconFilter,
+  IconSearch,
+  IconSpark,
+  IconWallet,
+  IconX,
+} from "../../icons";
 import { Page } from "../Shell";
 
 export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } = {}) {
@@ -11,6 +19,24 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
   const [categoryId, setCategoryId] = useState<string>("");
   const [search, setSearch] = useState("");
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
+  const categoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setCategoryMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     void Promise.all([api.accounts(), api.categories()]).then(([a, c]) => {
@@ -49,6 +75,16 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
   const accountName = (id: string | null) =>
     id === null ? null : (accounts.find((a) => a.id === id)?.name ?? null);
 
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    if (!transactions) return map;
+    for (const txn of transactions) {
+      const key = txn.category_id !== null ? String(txn.category_id) : "uncategorized";
+      map[key] = (map[key] || 0) + 1;
+    }
+    return map;
+  }, [transactions]);
+
   const visible = useMemo(() => {
     if (!transactions) return null;
     let list = transactions;
@@ -68,6 +104,23 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
     );
   }, [transactions, search, categoryId, categories]);
 
+  const selectedAccountLabel = useMemo(() => {
+    if (!accountId) return "All Accounts";
+    return accounts.find((a) => a.id === accountId)?.name ?? "All Accounts";
+  }, [accountId, accounts]);
+
+  const selectedCategoryLabel = useMemo(() => {
+    if (!categoryId) return "All Categories";
+    return categoryName(Number(categoryId));
+  }, [categoryId, categories]);
+
+  const hasActiveFilters = Boolean(accountId || categoryId || search.trim());
+  const resetFilters = () => {
+    setAccountId("");
+    setCategoryId("");
+    setSearch("");
+  };
+
   return (
     <div>
       <div className="page-head">
@@ -80,33 +133,205 @@ export function TransactionsPage(_props: { onNavigate?: (page: Page) => void } =
       </div>
 
       <div className="card">
-        {/* Filters: Account, Category, Search */}
-        <div className="filter-row">
-          <select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-            <option value="">All accounts</option>
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </select>
+        <div className="filter-toolbar">
+          <div className="search-bar-wrap">
+            <span className="search-icon">
+              <IconSearch size={15} />
+            </span>
+            <input
+              type="text"
+              placeholder="Search merchant, description, category…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                className="clear-btn"
+                onClick={() => setSearch("")}
+                title="Clear search"
+              >
+                <IconX size={14} />
+              </button>
+            )}
+          </div>
 
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name.charAt(0).toUpperCase() + c.name.slice(1).toLowerCase()}
-              </option>
-            ))}
-          </select>
+          <div className="filter-dropdown-wrap" ref={accountRef}>
+            <button
+              type="button"
+              className={`filter-dropdown-trigger${accountId ? " active" : ""}${accountMenuOpen ? " open" : ""}`}
+              onClick={() => {
+                setAccountMenuOpen(!accountMenuOpen);
+                setCategoryMenuOpen(false);
+              }}
+            >
+              <span className="trigger-icon">
+                <IconWallet size={15} />
+              </span>
+              <span>{selectedAccountLabel}</span>
+              {accountId && <span className="active-dot" />}
+              <span className="chevron">
+                <IconChevronDown size={13} />
+              </span>
+            </button>
 
-          <input
-            type="search"
-            placeholder="🔍  Search merchant, description, category…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+            {accountMenuOpen && (
+              <div className="dropdown-popover">
+                <div className="dropdown-popover-header">SELECT ACCOUNT</div>
+                <div className="dropdown-popover-list">
+                  <button
+                    type="button"
+                    className={`dropdown-option${!accountId ? " selected" : ""}`}
+                    onClick={() => {
+                      setAccountId("");
+                      setAccountMenuOpen(false);
+                    }}
+                  >
+                    <span className="option-left">
+                      <span>All Accounts</span>
+                    </span>
+                    {!accountId && (
+                      <span className="option-check">
+                        <IconCheck size={14} />
+                      </span>
+                    )}
+                  </button>
+                  {accounts.map((account) => (
+                    <button
+                      key={account.id}
+                      type="button"
+                      className={`dropdown-option${accountId === account.id ? " selected" : ""}`}
+                      onClick={() => {
+                        setAccountId(account.id);
+                        setAccountMenuOpen(false);
+                      }}
+                    >
+                      <span className="option-left">
+                        <span>{account.name}</span>
+                      </span>
+                      {accountId === account.id && (
+                        <span className="option-check">
+                          <IconCheck size={14} />
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="filter-dropdown-wrap" ref={categoryRef}>
+            <button
+              type="button"
+              className={`filter-dropdown-trigger${categoryId ? " active category-active" : ""}${categoryMenuOpen ? " open" : ""}`}
+              onClick={() => {
+                setCategoryMenuOpen(!categoryMenuOpen);
+                setAccountMenuOpen(false);
+              }}
+            >
+              <span className="trigger-icon">
+                <IconFilter size={15} />
+              </span>
+              <span>{selectedCategoryLabel}</span>
+              {categoryId && <span className="active-dot" />}
+              <span className="chevron">
+                <IconChevronDown size={13} />
+              </span>
+            </button>
+
+            {categoryMenuOpen && (
+              <div className="dropdown-popover" style={{ minWidth: 260 }}>
+                <div className="dropdown-popover-header">SELECT CATEGORY</div>
+                <div className="dropdown-popover-list">
+                  <button
+                    type="button"
+                    className={`dropdown-option${!categoryId ? " selected" : ""}`}
+                    onClick={() => {
+                      setCategoryId("");
+                      setCategoryMenuOpen(false);
+                    }}
+                  >
+                    <span className="option-left">
+                      <span>All Categories</span>
+                    </span>
+                    {!categoryId ? (
+                      <span className="option-check">
+                        <IconCheck size={14} />
+                      </span>
+                    ) : (
+                      transactions && <span className="option-count">{transactions.length}</span>
+                    )}
+                  </button>
+                  {categories.map((c) => {
+                    const count = categoryCounts[String(c.id)] || 0;
+                    const isSelected = categoryId === String(c.id);
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        className={`dropdown-option${isSelected ? " selected" : ""}`}
+                        onClick={() => {
+                          setCategoryId(String(c.id));
+                          setCategoryMenuOpen(false);
+                        }}
+                      >
+                        <span className="option-left">
+                          <span>{categoryName(c.id)}</span>
+                        </span>
+                        {isSelected ? (
+                          <span className="option-check">
+                            <IconCheck size={14} />
+                          </span>
+                        ) : (
+                          count > 0 && <span className="option-count">{count}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
+        {hasActiveFilters && (
+          <div className="active-filter-strip">
+            <span style={{ fontSize: 11.5, color: "var(--color-fog-blue)", marginRight: 4 }}>
+              Filters ({visible ? visible.length : 0} of {transactions ? transactions.length : 0}):
+            </span>
+            {accountId && (
+              <div className="active-filter-badge">
+                <span className="badge-label">Account:</span>
+                <span>{selectedAccountLabel}</span>
+                <button type="button" onClick={() => setAccountId("")}>
+                  <IconX size={12} />
+                </button>
+              </div>
+            )}
+            {categoryId && (
+              <div className="active-filter-badge">
+                <span className="badge-label">Category:</span>
+                <span>{selectedCategoryLabel}</span>
+                <button type="button" onClick={() => setCategoryId("")}>
+                  <IconX size={12} />
+                </button>
+              </div>
+            )}
+            {search.trim() && (
+              <div className="active-filter-badge">
+                <span className="badge-label">Search:</span>
+                <span>&ldquo;{search}&rdquo;</span>
+                <button type="button" onClick={() => setSearch("")}>
+                  <IconX size={12} />
+                </button>
+              </div>
+            )}
+            <button type="button" className="reset-filters-btn" onClick={resetFilters}>
+              Reset all
+            </button>
+          </div>
+        )}
 
         {visible === null ? (
           <div className="empty">Loading transactions…</div>
